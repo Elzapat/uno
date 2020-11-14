@@ -47,16 +47,21 @@ void Server::lobby() {
                                 packet >> name;
                                 it->setName(name);
                                 it->setUniqueID(ID++);
+                                it->setAddress(it->getSocket()->getRemoteAddress().toString());
                                 for (std::vector<Player>::iterator it2 = players.begin(); it2 != players.end(); ++it2) {
-                                    std::cout << "it2:" << it2->getName() << " it:" << it->getName() << std::endl;
                                     if (it != it2) {
                                         sf::Packet sendNamePacket;
                                         sf::Packet sendNamePacket2;
                                         PacketPrefix prefix2 = PLAYER_INFO;
-                                        sendNamePacket << static_cast<int>(prefix2) << it->getName() << it->getUniqueID();
+                                        sendNamePacket << static_cast<int>(prefix2) << it->getName() << it->getUniqueID() << it->getAddress();
                                         it2->getSocket()->send(sendNamePacket);
-                                        sendNamePacket2 << static_cast<int>(prefix2) << it2->getName() << it->getUniqueID();
+                                        sendNamePacket2 << static_cast<int>(prefix2) << it2->getName() << it2->getUniqueID() << it2->getAddress();
                                         it->getSocket()->send(sendNamePacket2);
+                                    } else {
+                                        sf::Packet sendIDPacket; 
+                                        PacketPrefix prefix = PLAYER_ID;
+                                        sendIDPacket << static_cast<int>(prefix) << it->getUniqueID();
+                                        it->getSocket()->send(sendIDPacket);
                                     }
                                 }
                             } else if (static_cast<PacketPrefix>(prefix) == GAME_START) {
@@ -88,19 +93,27 @@ void Server::lobby() {
 
 void Server::game() {
 
-    std::cout << "server: game is about to start!" << std::endl;
     Deck drawDeck(false);
     Deck playDeck(true); 
     drawDeck.shuffle();
     dealSevenCards(drawDeck);
     drawFirstCard(drawDeck, playDeck);
+    std::vector<Player>::iterator turnIt = players.begin();
+    sendTurnInfo(turnIt);
 
     bool running = true;
     while (running) {
         if (players.size() == 0) running = false;
         if (selector.wait()) {
-            for (auto &player : players) {
-
+            for (auto it = players.begin(); it != players.end(); ++it) {
+                if (it == turnIt) it->isPlaying = true;
+                else it->isPlaying = false;
+                if (selector.isReady(*(it->getSocket()))) {
+                    sf::Packet packet;
+                    sf::Socket::Status status = it->getSocket()->receive(packet);
+                    if (status == sf::Socket::Done) processPacket(packet, it, turnIt, playDeck);
+                    else if (status = sf::Socket::Disconnected) playerDisconnected(*it);
+                }
             }
         }
     }
@@ -109,7 +122,6 @@ void Server::game() {
 void Server::dealSevenCards(Deck &deck) {
 
     for (auto &player : players) {
-        std::cout << "server: sending 7 cards to: " << player.getName() << std::endl;
         for (int i = 0; i < 7; ++i) {
             Card drawnCard = deck.draw();
             PacketPrefix prefix = CARD_DRAWN;
@@ -123,8 +135,14 @@ void Server::dealSevenCards(Deck &deck) {
 
 void Server::drawFirstCard(Deck &drawDeck, Deck &playDeck) {
 
-    Card drawnCard = drawDeck.draw();
-    playDeck.addCardOnTop(drawnCard);
+    Card drawnCard;
+    do {
+        drawnCard = drawDeck.draw();
+        playDeck.addCardOnTop(drawnCard);
+    } while (drawnCard.getColor() == Card::Color::BLACK ||
+             drawnCard.getValue() == Card::Value::SKIP ||
+             drawnCard.getValue() == Card::Value::REVERSE ||
+             drawnCard.getValue() == Card::Value::DRAW_TWO);
 
     for (auto p : players) {
         sf::Packet packet;
@@ -132,4 +150,57 @@ void Server::drawFirstCard(Deck &drawDeck, Deck &playDeck) {
         packet << static_cast<int>(prefix) << drawnCard;
         p.getSocket()->send(packet);
     }
+}
+
+void Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator player, std::vector<Player>::iterator turnIt, Deck& playDeck) {
+
+    int prefix;
+    packet >> prefix;
+
+    switch (static_cast<PacketPrefix>(prefix)) {
+        case CARD_PLAYED:
+            if (player != turnIt) break;
+            Card card;
+            Card topCard = playDeck.getCards().back();
+            packet >> card;
+            if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK) {
+                if (card.getColor() == Card::Color::BLACK) {
+                    if (card.getValue() == Card::Value::WILD) {
+                        sf::Packet packet;
+                        PacketPrefix prefix = CHOOSE_COLOR;
+                        player->getSocket()->send(packet);
+                        break;
+                    } else if (card.getValue() == Card::Value::WILD_FOUR) {
+
+                    } 
+                }
+            } else if (topCard.getColor() == Card::Color::BLACK && card.getColor() == topColor)
+            break;
+        case COLOR_CHOSEN:
+            int colorChosen;
+            topColor = static_cast<Card::Color>(colorChosen);
+            packet >> colorChosen;
+            sf::Packet packet;
+            PacketPrefix prefix = TOP_COLOR_CHANGE;
+            packet << static_cast<int>(prefix) << colorChosen;
+            for (auto p : players) p.getSocket()->send(packet);
+    }
+}
+
+void Server::playerDisconnected(Player player) {
+
+    PacketPrefix prefix = PLAYER_DISCONNECTED;
+    sf::Packet packet;
+    packet << static_cast<int>(prefix) << player.getUniqueID();
+    for (auto p : players) {
+        if (p.getUniqueID() != player.getUniqueID()) p.getSocket()->send(packet);
+    }
+}
+
+void Server::sendTurnInfo(std::vector<Player>::iterator turnIt) {
+
+    sf::Packet packet;
+    PacketPrefix prefix = TURN_INFO;
+    packet << static_cast<int>(prefix) << turnIt->getUniqueID();
+    for (auto p : players) p.getSocket()->send(packet);
 }

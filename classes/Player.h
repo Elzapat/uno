@@ -27,7 +27,7 @@ class Player {
         sf::TcpSocket   *getSocket      ();
         std::vector<Card> getHand       ();
         bool            isHost;
-        bool            turn;
+        bool            isPlaying;
 
     private:
         int             uniqueID;

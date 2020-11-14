@@ -19,5 +19,13 @@ std::vector<Card> Player::getHand() { return this->hand; }
 void Player::addCardToHand(Card card) { this->hand.push_back(card); }
 void Player::removeCardFromHand(Card card) {
 
+    int i = 0;
+    for (auto c : hand) {
+        if (c.getValue() == card.getValue() && c.getColor() == card.getColor()) {
+            hand.erase(hand.begin() + i);
+            break;
+        }
+        i++;
+    }
 }
 
