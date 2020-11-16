@@ -28,7 +28,7 @@ Deck::~Deck() {
     //for (auto e : cards) delete e;
 }
 
-std::vector<Card> Deck::getCards() { return this->cards; }
+std::vector<Card>& Deck::getCards() { return this->cards; }
 
 void Deck::shuffle() {
 
@@ -58,3 +58,11 @@ Card Deck::draw() {
 }
 
 void Deck::addCardOnTop(Card card) { this->cards.push_back(card); }
+
+Card Deck::removeFirstCard() {
+
+    Card removedCard = cards.front();
+    cards.erase(cards.begin());
+
+    return removedCard;
+}

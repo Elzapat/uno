@@ -17,12 +17,14 @@ class Server {
             PLAYER_DISCONNECTED,
             PLAYER_ID,
             GAME_START,
+            DRAW_CARD,
             CARD_DRAWN,
             CARD_PLAYED,
             TURN_INFO,
             CHOOSE_COLOR,
             COLOR_CHOSEN,
-            TOP_COLOR_CHANGE
+            TOP_COLOR_CHANGE,
+            UNO
         };
         void                    lobby               ();
         void                    game                ();
@@ -37,11 +39,14 @@ class Server {
         sf::TcpListener         &listener;
         sf::SocketSelector      selector;
         Card::Color             topColor;
+        char                    reverseTurn = false;
         void                    dealSevenCards(Deck &deck);
         void                    drawFirstCard(Deck &drawDeck, Deck &playDeck);
-        void                    processPacket(sf::Packet& packet, std::vector<Player>::iterator player, std::vector<Player>::iterator turnIt, Deck& playDeck);
+        void                    processPacket(sf::Packet& packet, std::vector<Player>::iterator& player, std::vector<Player>::iterator& turnIt, Deck& playDeck, Deck& drawDeck, bool& wildFourChosen);
         void                    playerDisconnected(Player player);
-        void                    sendTurnInfo(std::vector<Player>::iterator turnIt);
+        void                    sendTurnInfo(std::vector<Player>::iterator& turnIt);
+        void                    passTurn(std::vector<Player>::iterator& turnIt);
+        bool                    drawACard(std::vector<Player>::iterator& player, Deck& drawDeck, Deck& playDeck);
 };
 
 #endif

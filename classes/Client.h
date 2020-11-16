@@ -32,12 +32,20 @@ class Client {
         Sprite background;
         Card topCard;
         Card::Color topColor;
+        bool canPlay;
+        bool alreadyDrew;
+        bool showUnoButton;
+        sf::Clock unoClock;
+        Sprite drawButton,
+               drawButtonH,
+               unoButton,
+               unoButtonH;
         bool chooseColor;
         void initPlayerList(sf::Text* playerList, sf::Font& font);
         void initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect);
         void processPacket(sf::Packet &packet);
-        void processEvent(sf::Event event, sf::IntRect red, sf::IntRect yellow, sf::IntRect green, sf::IntRect blue);
-        void processEvent(sf::Event event);
+        void processEvent(sf::Event event, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue);
+        void processEvent(sf::Event event, int& hovered);
 };
 
 #endif

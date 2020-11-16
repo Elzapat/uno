@@ -36,9 +36,3 @@ Card::Value Card::getValue() { return this->value; }
 sf::Packet& operator << (sf::Packet& packet, Card card) {
     return packet << static_cast<int>(card.getColor()) << static_cast<int>(card.getValue());
 }
-sf::Packet& operator >> (sf::Packet& packet, Card card) {
-    int color, value;
-    packet >> color;
-    packet >> value;
-    return packet >> color >> value;
-}

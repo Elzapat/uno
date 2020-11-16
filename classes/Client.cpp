@@ -23,10 +23,15 @@ int Client::lobby() {
     SCREEN_WIDTH = window.getSize().x;
     SCREEN_HEIGHT = window.getSize().y;
 
+    Card::loadAssets();
+
+    Card exempleCard(Card::Color::RED, Card::Value::ZERO, 0.8f);
     const int BUTTON_WIDTH = 404;
     const int BUTTON_HEIGHT = 107;
     const int SCREEN_CENTER_X = SCREEN_WIDTH / 2 - BUTTON_WIDTH / 2;
     const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2 - BUTTON_HEIGHT / 2;
+    int unoButtonArea = SCREEN_WIDTH / 2 - exempleCard.sprite.getGlobalBounds().width - 20;
+    unoButtonArea = unoButtonArea / 2 - BUTTON_WIDTH / 2;
 
     Sprite background;
     Sprite quitButton;
@@ -35,9 +40,13 @@ int Client::lobby() {
     Sprite startButtonH;
     sf::Texture buttonsTexture;
     sf::Texture buttonsTextureH;
+    sf::Texture buttons4Texture;
+    sf::Texture buttons4TextureH;
 
     buttonsTexture.loadFromFile("assets/sprites/buttons3.png");
     buttonsTextureH.loadFromFile("assets/sprites/buttons3_hovered.png");
+    buttons4Texture.loadFromFile("assets/sprites/buttons4.png");
+    buttons4TextureH.loadFromFile("assets/sprites/buttons4_hovered.png");
 
     background.texture.loadFromFile("assets/sprites/game_background.jpg");
     background.sprite.setTexture(background.texture);
@@ -47,6 +56,10 @@ int Client::lobby() {
     initButton(startButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.4, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
     initButton(quitButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
     initButton(quitButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(drawButton, buttons4Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.28, sf::IntRect(98, 247, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(drawButtonH, buttons4TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.28, sf::IntRect(98, 247, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(unoButton, buttons4Texture, unoButtonArea, SCREEN_HEIGHT / 2.4 - BUTTON_HEIGHT / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(unoButtonH, buttons4TextureH, unoButtonArea, SCREEN_HEIGHT / 2.4 - BUTTON_HEIGHT / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
 
     sf::Event event;
     sf::Packet packet;
@@ -180,10 +193,12 @@ void Client::game() {
     sf::Event event;
     sf::Packet packet;
     chooseColor = false;
+    canPlay = true;
+    alreadyDrew = false;
+    int hovered = 0;
     playerList = new sf::Text[players.size()];
     initPlayerList(playerList, font);
 
-    Card::loadAssets();
     topCard = Card(Card::Color::BLACK, Card::Value::BACK, 0.8f);
     Card cardBack(Card::Color::BLACK, Card::Value::BACK, 0.8f);
     topCard.sprite.setPosition(SCREEN_WIDTH / 2 + 20, SCREEN_HEIGHT / 2.4 - topCard.sprite.getGlobalBounds().height / 2);
@@ -210,7 +225,7 @@ void Client::game() {
         window.clear();
         window.draw(background.sprite);
         if (!player.getHand().empty()) {
-            std::vector<Card> hand = player.getHand();
+            std::vector<Card>& hand = player.getHand();
             int spacing = SCREEN_WIDTH / (hand.size() + 1);
             int cardWidth = hand[0].sprite.getGlobalBounds().width;
             for (int i = 0; i < hand.size(); ++i) {
@@ -227,11 +242,24 @@ void Client::game() {
             window.draw(green);
             window.draw(blue);
         }
+        if (hovered == 1 && player.isPlaying && !chooseColor && !canPlay && !alreadyDrew) window.draw(drawButtonH.sprite);
+        else if (player.isPlaying && !chooseColor && !canPlay && !alreadyDrew) window.draw(drawButton.sprite);
+
+        if (hovered == 2 && showUnoButton) window.draw(unoButtonH.sprite);
+        else if (showUnoButton) window.draw(unoButton.sprite);
+        if (showUnoButton && unoClock.getElapsedTime().asMilliseconds() > 2000) {
+            showUnoButton = false;
+            sf::Packet unoPacket;
+            Server::PacketPrefix unoPrefix = Server::PacketPrefix::UNO;
+            bool pressedUno = false;
+            unoPacket << static_cast<int>(unoPrefix) << pressedUno;
+            player.getSocket()->send(unoPacket);
+        }
 
         if (player.getSocket()->receive(packet) == sf::Socket::Done) processPacket(packet);
         while (window.pollEvent(event)) {
             if (chooseColor) processEvent(event, red.getGlobalBounds(), yellow.getGlobalBounds(), green.getGlobalBounds(), blue.getGlobalBounds());
-            else processEvent(event);
+            else processEvent(event, hovered);
         }
 
         window.display();
@@ -242,72 +270,141 @@ void Client::game() {
 void Client::processPacket(sf::Packet &packet) {
 
     int prefix;
-    int color, value;
+    Card card;
     int ID;
     int i = 0;
+    int color, value;
+
     packet >> prefix;
     switch (static_cast<Server::PacketPrefix>(prefix)) {
         case Server::PacketPrefix::CARD_DRAWN:
-            packet >> color;
-            packet >> value;
-            player.addCardToHand(Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value), 0.5f));
+            packet >> color >> value >> ID;
+            card = Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value));
+            if (player.getUniqueID() == ID) player.addCardToHand(Card(card.getColor(), card.getValue(), 0.5f));
+            for (Player &p : players)
+                if (p.getUniqueID() == ID) p.addCardToHand(card);
+            for (auto card : player.getHand()) {
+                if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK || (topCard.getColor() == Card::Color::BLACK && card.getColor() == topColor)) {
+                    canPlay = true;
+                    break;
+                } else canPlay = false;
+            }
             break;
         case Server::PacketPrefix::CARD_PLAYED:
-            packet >> color;
-            packet >> value;
-            topCard = Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value), 0.8f);
+            packet >> color >> value >> ID;
+            card = Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value));
+            for (Player& p : players)
+                if (p.getUniqueID() == ID) p.removeCardFromHand(card);
+            topCard = Card(card.getColor(), card.getValue(), 0.8f);
             topCard.sprite.setPosition(SCREEN_WIDTH / 2 + 20, SCREEN_HEIGHT / 2.4 - topCard.sprite.getGlobalBounds().height / 2);
+            topColor = topCard.getColor();
             break;
         case Server::PacketPrefix::TURN_INFO:
             packet >> ID;
             i = 0;
+            canPlay = true;
             for (Player& p : players) {
                 if (ID == p.getUniqueID()) {
                     p.isPlaying = true;
                     playerList[i].setFillColor(sf::Color(255, 0, 0));
+                    playerList[i].setString(p.getName() + " (" + std::to_string(p.getHand().size()) + ")");
                 } else {
                     p.isPlaying = false;
                     playerList[i].setFillColor(sf::Color(0, 0, 0));
+                    playerList[i].setString(p.getName() + " (" + std::to_string(p.getHand().size()) + ")");
                 }
-                if (ID == player.getUniqueID()) player.isPlaying = true;
+                if (ID == player.getUniqueID()) {
+                    player.isPlaying = true;
+                    for (auto card : player.getHand())  {
+                        if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK || (topCard.getColor() == Card::Color::BLACK && card.getColor() == topColor)) {
+                            canPlay = true;
+                            break;
+                        } else canPlay = false;
+                    }
+                }
+                else player.isPlaying = false;
                 i++;
             }
+            alreadyDrew = false;
             break;
         case Server::PacketPrefix::CHOOSE_COLOR:
             chooseColor = true; 
             break;
         case Server::PacketPrefix::TOP_COLOR_CHANGE:
+            int newTopColor;
+            packet >> newTopColor;
+            topColor = static_cast<Card::Color>(newTopColor);
+            chooseColor = false;
+            break;
+        case Server::PacketPrefix::PLAYER_DISCONNECTED:
+            packet >> ID; 
+            i = 0;
+            for (auto p : players) {
+                if (p.getUniqueID() == ID) {
+                    players.erase(players.begin() + i);
+                    break;
+                }
+            }
+            break;
+        case Server::PacketPrefix::UNO:
+            std::cout << "client: uno intiated" << std::endl;
+            showUnoButton = true;
+            unoClock.restart();
+            player.isPlaying = false;
             break;
     }
 }
 
-void Client::processEvent(sf::Event event) {
+void Client::processEvent(sf::Event event, int& hovered) {
 
     switch (event.type) {
         case sf::Event::Closed:
             window.close();
             break;
         case sf::Event::MouseButtonPressed:
-            if (player.isPlaying) {
-                if (chooseColor) {
-                    if ()
-                }
-                for (auto card : player.getHand()) {
-                    if (card.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
-                        if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK) {
-                            sf::Packet packet;
-                            Server::PacketPrefix prefix = Server::PacketPrefix::CARD_PLAYED;
-                            packet << static_cast<int>(prefix) << card;
-                            player.getSocket()->send(packet);
+            if (showUnoButton && unoButton.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                std::cout << "clicked on uno button" << std::endl;
+                showUnoButton = false;
+                sf::Packet unoPacket;
+                Server::PacketPrefix unoPrefix = Server::PacketPrefix::UNO;
+                bool pressedUno = true;
+                unoPacket << static_cast<int>(unoPrefix) << pressedUno;
+                player.getSocket()->send(unoPacket);
+            } else if (player.isPlaying) {
+                if (!alreadyDrew && drawButton.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    sf::Packet packet;
+                    Server::PacketPrefix prefix = Server::PacketPrefix::DRAW_CARD;
+                    packet << static_cast<int>(prefix);
+                    player.getSocket()->send(packet);
+                    alreadyDrew = true;
+                    break;
+                } else {
+                    for (Card& card : player.getHand()) {
+                        if (card.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                            if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK || (topCard.getColor() == Card::Color::BLACK && card.getColor() == topColor)) {
+                                sf::Packet packet;
+                                Server::PacketPrefix prefix = Server::PacketPrefix::CARD_PLAYED;
+                                packet << static_cast<int>(prefix) << card;
+                                player.getSocket()->send(packet);
+                                player.removeCardFromHand(card);
+                                break;
+                            }
                         }
                     }
                 }
             }
             break;
+        case sf::Event::MouseMoved:
+            if (drawButton.sprite.getGlobalBounds().contains(event.mouseMove.x, event.mouseMove.y))
+                hovered = 1;
+            else if (unoButton.sprite.getGlobalBounds().contains(event.mouseMove.x, event.mouseMove.y))
+                hovered = 2;
+            else hovered = 0;
+            break;
     }
 }
 
-void processEvent(sf::Event event, sf::IntRect red, sf::IntRect yellow, sf::IntRect green, sf::IntRect blue) {
+void Client::processEvent(sf::Event event, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue) {
 
     if (event.type == sf::Event::MouseButtonPressed) {
         sf::Packet packet;
@@ -330,7 +427,7 @@ void processEvent(sf::Event event, sf::IntRect red, sf::IntRect yellow, sf::IntR
             packet << static_cast<int>(prefix) << static_cast<int>(chosenColor);
             player.getSocket()->send(packet); 
         }
-    }
+    } else if (event.type == sf::Event::Closed) window.close();
 }
 
 void Client::initPlayerList(sf::Text* playerList, sf::Font &font) {

@@ -1,6 +1,6 @@
 CC 		 := g++
 OBJECTS  := main.o functions.o Game.o Menu.o Deck.o Card.o Player.o Server.o Client.o
-CFLAGS 	 := -std=c++17 -pthread
+CFLAGS 	 := -std=c++17 -std=gnu++17 -pthread
 FLAGS	 := -g -c
 EXE 	 := uno.exe
 INCLUDES := -ISFML/include

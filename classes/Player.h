@@ -25,7 +25,7 @@ class Player {
         void            removeCardFromHand (Card card);
         void            setSocket       (sf::TcpSocket *socket);
         sf::TcpSocket   *getSocket      ();
-        std::vector<Card> getHand       ();
+        std::vector<Card>& getHand       ();
         bool            isHost;
         bool            isPlaying;
 

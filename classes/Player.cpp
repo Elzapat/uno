@@ -15,7 +15,7 @@ std::string Player::getHostAddress() { return this->hostAddress; }
 void Player::setHostAddress(std::string hostAddress) { this->hostAddress = hostAddress; }
 void Player::setSocket(sf::TcpSocket *socket) { this->socket = socket; }
 sf::TcpSocket* Player::getSocket() { return this->socket; }
-std::vector<Card> Player::getHand() { return this->hand; }
+std::vector<Card>& Player::getHand() { return this->hand; }
 void Player::addCardToHand(Card card) { this->hand.push_back(card); }
 void Player::removeCardFromHand(Card card) {
 
