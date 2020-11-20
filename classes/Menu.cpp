@@ -9,8 +9,13 @@ Player Menu::initMenu() {
 
     const int BUTTON_WIDTH = 404;
     const int BUTTON_HEIGHT = 107;
-    const int SCREEN_CENTER_X = SCREEN_WIDTH / 2 - BUTTON_WIDTH / 2;
-    const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2 - BUTTON_HEIGHT / 2;
+    const int SCREEN_CENTER_X = SCREEN_WIDTH / 2;
+    const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;
+
+    sf::Image icon = sf::Image{};
+    icon.loadFromFile("assets/sprites/card_back.png");
+    
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     window.setFramerateLimit(30);
     window.clear();
@@ -22,7 +27,8 @@ Player Menu::initMenu() {
 
     logo.texture.loadFromFile("assets/sprites/uno.png");
     logo.sprite.setTexture(logo.texture);
-    logo.sprite.setPosition((SCREEN_WIDTH / 2) - (500 / 2), (SCREEN_HEIGHT / 4) - (382 / 2));
+    logo.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);
+    logo.sprite.setPosition((SCREEN_WIDTH / 2) - (logo.sprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 3.7) - (logo.sprite.getGlobalBounds().height / 2));
     window.draw(logo.sprite);
 
     sf::Texture buttonsTexture;
@@ -38,20 +44,20 @@ Player Menu::initMenu() {
     buttons3Texture.loadFromFile("assets/sprites/buttons3.png");
     buttons3TextureH.loadFromFile("assets/sprites/buttons3_hovered.png");
 
-    initButton(playButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(settingsButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.3, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(quitButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.6, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(playButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(settingsButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.3, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(quitButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.6, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(joinButton, buttons2Texture, 400, SCREEN_CENTER_Y * 0.7, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(hostButton, buttons2Texture, SCREEN_WIDTH - 800, SCREEN_CENTER_Y * 0.7, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(backButton, buttons2Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.6, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(joinButtonH, buttons2TextureH, 400, SCREEN_CENTER_Y * 0.7, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(hostButtonH, buttons2TextureH, SCREEN_WIDTH - 800, SCREEN_CENTER_Y * 0.7, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(backButtonH, buttons2TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.6, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(connectButton, buttons3Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 0.87, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(connectButtonH, buttons3TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 0.87, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(playButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.1, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(playButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.1, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(settingsButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.4, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(settingsButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.4, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(quitButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(quitButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(backButton, buttons2Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(backButtonH, buttons2TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(joinButton, buttons2Texture, SCREEN_CENTER_X - 400, SCREEN_CENTER_Y * 0.8, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(joinButtonH, buttons2TextureH, SCREEN_CENTER_X - 400, SCREEN_CENTER_Y * 0.8, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(hostButton, buttons2Texture, SCREEN_CENTER_X + 400, SCREEN_CENTER_Y * 0.8, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(hostButtonH, buttons2TextureH, SCREEN_CENTER_X + 400, SCREEN_CENTER_Y * 0.8, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(connectButton, buttons3Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 0.88, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(connectButtonH, buttons3TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 0.88, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
 
     gui::Theme::loadFont("assets/fonts/ArialCE.ttf");
     gui::Theme::loadTexture("assets/sprites/texture-default.png");
@@ -156,22 +162,26 @@ void Menu::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::Int
     button.texture = texture;
     button.sprite.setTexture(button.texture);
     button.sprite.setTextureRect(textureRect);
-    button.sprite.setPosition(x, y);
+    button.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);
+    button.sprite.setPosition(x - button.sprite.getGlobalBounds().width / 2, y - button.sprite.getGlobalBounds().height / 2);
 }
 
 int Menu::settings() {
 
+    sf::RectangleShape backRect(sf::Vector2f(1000 * ((float)SCREEN_WIDTH / 1920), 600 * ((float)SCREEN_HEIGHT / 1080)));
+    backRect.setFillColor(sf::Color(15, 57, 84));
+    backRect.setPosition(SCREEN_WIDTH / 2 - backRect.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2.7 - backRect.getGlobalBounds().height / 2);
     gui::Theme::textSize = 30;
     
     gui::Menu settingsMenu(window);
-    settingsMenu.setPosition(SCREEN_WIDTH / 2 - 1000 / 2 + 20, SCREEN_HEIGHT / 2.7 - 600 / 2 + 20);
+    settingsMenu.setPosition(backRect.getPosition().x + 50, backRect.getPosition().y + 50);
 
     gui::HBoxLayout *hbox = settingsMenu.addHBoxLayout();
     gui::FormLayout *form = hbox->addFormLayout();
 
     sf::Text nameText("Votre pseudo est : " + playerName, gui::Theme::getFont(), 30);
     nameText.setFillColor(sf::Color(0, 0, 0));
-    nameText.setPosition(480, 175);
+    nameText.setPosition(backRect.getPosition().x + 50, backRect.getPosition().y + 100);
 
     gui::TextBox *nameTextbox = new gui::TextBox(300);
     nameTextbox->setText(playerName);
@@ -180,13 +190,8 @@ int Menu::settings() {
     nameTextbox->setCallback([&]() {
         playerName = nameTextbox->getText().toAnsiString();
         nameText.setString("Votre pseudo est : " + playerName);
-        //text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
     });
     form->addRow("Pseudo ", nameTextbox);
-
-    sf::RectangleShape backRect(sf::Vector2f(1000, 600));
-    backRect.setFillColor(sf::Color(15, 57, 84));
-    backRect.setPosition(SCREEN_WIDTH / 2 - 1000 / 2, SCREEN_HEIGHT / 2.7 - 600 / 2);
 
     sf::Event event;
     int buttonHovered = 0;
@@ -315,7 +320,11 @@ int Menu::joinGame(bool &emptyName) {
     bool invalidAddress = false;
     bool connectFail = false;
 
-    gui::Theme::textSize = 50;
+    sf::RectangleShape backRect(sf::Vector2f(1000 * ((float)SCREEN_WIDTH / 1920), 300 * ((float)SCREEN_HEIGHT / 1080)));
+    backRect.setPosition(SCREEN_WIDTH / 2 - backRect.getGlobalBounds().width / 2, SCREEN_HEIGHT / 2.7 - backRect.getGlobalBounds().height / 2);
+    backRect.setFillColor(sf::Color(15, 57, 84));
+
+    gui::Theme::textSize = 50 * ((float)SCREEN_WIDTH / 1920);
 
     gui::Menu ipTextboxMenu(window);
 
@@ -331,15 +340,12 @@ int Menu::joinGame(bool &emptyName) {
     });
     form->addRow("", ipTextbox);
 
-    ipTextboxMenu.setPosition(SCREEN_WIDTH / 2 - ipTextboxMenu.getSize().x / 2, SCREEN_HEIGHT / 2.22 - 300 / 2);
+    ipTextboxMenu.setPosition(SCREEN_WIDTH / 2 - ipTextboxMenu.getSize().x / 2, SCREEN_HEIGHT / 2.22 - backRect.getGlobalBounds().height / 2);
 
-    sf::RectangleShape backRect(sf::Vector2f(1000, 300));
-    backRect.setPosition(SCREEN_WIDTH / 2 - 1000 / 2, SCREEN_HEIGHT / 2.7 - 300 / 2);
-    backRect.setFillColor(sf::Color(15, 57, 84));
 
-    sf::Text info(L"Rentrez l'adresse IP de l'hébergeur :", gui::Theme::getFont(), 40);
+    sf::Text info(L"Rentrez l'adresse IP de l'hébergeur :", gui::Theme::getFont(), 40 * ((float)SCREEN_WIDTH / 1920));
     info.setFillColor(sf::Color(0, 0, 0));
-    info.setPosition(SCREEN_WIDTH / 2 - info.getGlobalBounds().width / 2, SCREEN_HEIGHT / 4);
+    info.setPosition(SCREEN_WIDTH / 2 - info.getGlobalBounds().width / 2, backRect.getGlobalBounds().height - 20);
 
     sf::Text invalidAddressWarning(L"L'adresse IP que vous avez rentrée n'est pas valide.", gui::Theme::getFont(), 30);
     invalidAddressWarning.setFillColor(sf::Color(255, 0, 0));

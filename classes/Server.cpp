@@ -161,6 +161,8 @@ void Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pl
     packet >> prefix;
     Card card;
     int color, value;
+    bool passExtraTurn = false;
+    int nbDrawCard = 0;
     bool canPlay = false;
     bool pressedUno;
     Card topCard = playDeck.getCards().back();
@@ -177,17 +179,15 @@ void Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pl
                     packet << static_cast<int>(prefix); 
                     player->getSocket()->send(packet);
                     if (card.getValue() == Card::Value::WILD_FOUR) wildFourChosen = true;
-                    passTurn(turnIt);
                 } else if (card.getValue() == Card::Value::SKIP) {
-                    passTurn(turnIt);
+                    passExtraTurn = true;
                 } else if (card.getValue() == Card::Value::REVERSE) {
                     if (reverseTurn) reverseTurn = false;
                     else reverseTurn = true;
-                    if (players.size() == 2) passTurn(turnIt);
+                    if (players.size() == 2) passExtraTurn = true;
                 } else if (card.getValue() == Card::Value::DRAW_TWO) {
-                    passTurn(turnIt);
-                    drawACard(turnIt, drawDeck, playDeck);
-                    drawACard(turnIt, drawDeck, playDeck);
+                    passExtraTurn = true;
+                    nbDrawCard += 2;
                 }
                 sf::Packet packet;
                 PacketPrefix prefix = CARD_PLAYED;
@@ -197,18 +197,27 @@ void Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pl
                 playDeck.addCardOnTop(card);
                 topColor = card.getColor();
             
+                std::cout << "server: nb cards in hand: " << turnIt->getHand().size() << std::endl;
                 bool goingThroughUno = false;
                 if (turnIt->getHand().size() == 1) {
+                    std::cout << "server: uno initated" << std::endl;
                     goingThroughUno = true;
                     sf::Packet unoPacket;
                     PacketPrefix unoPrefix = UNO;
                     unoPacket << static_cast<int>(unoPrefix);
                     turnIt->getSocket()->send(unoPacket);
+                } else if (turnIt->getHand().size() == 0) {
+                    sf::Packet winPacket;
+                    PacketPrefix winPrefix = PLAYER_WON;
+                    winPacket << static_cast<int>(winPrefix) << turnIt->getUniqueID();
+                    for (auto p : players) p.getSocket()->send(winPacket);
+
+                    computeScores();
                 }
 
+                if (passExtraTurn) passTurn(turnIt);
+                for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
                 if (!goingThroughUno) passTurn(turnIt);
-                std::cout << "server: cards remaining in drawDeck: " << drawDeck.getCards().size() << std::endl;
-                std::cout << "server: cards ramaining in playDeck: " << playDeck.getCards().size() << std::endl;
                 break;
             } 
             break;
@@ -218,12 +227,11 @@ void Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pl
             break;
         case UNO:
             packet >> pressedUno; 
-            if (pressedUno) passTurn(turnIt);
-            else {
+            if (!pressedUno) {
                 drawACard(turnIt, drawDeck, playDeck);
                 drawACard(turnIt, drawDeck, playDeck);
-                passTurn(turnIt);
             }
+            passTurn(turnIt);
             break;
         case COLOR_CHOSEN:
             int colorChosen;
@@ -301,4 +309,19 @@ bool Server::drawACard(std::vector<Player>::iterator& player, Deck& drawDeck, De
     }
 
     return canPlay;
+}
+
+void Server::computeScores() {
+
+    for (Player& p : players) {
+        int score = 0;    
+        for (auto c : p.getHand()) {
+            if (c.getValue() == Card::Value::SKIP || c.getValue() == Card::Value::REVERSE || c.getValue() == Card::Value::DRAW_TWO)
+                score += 20;
+            else if (c.getColor() == Card::Color::BLACK)
+                score += 50;
+            else score += static_cast<int>(c.getValue());
+        }
+        p.setScore(p.getScore() + score);
+    }
 }

@@ -3,6 +3,8 @@
 Client::Client(sf::RenderWindow &initWindow, Player initPlayer) 
     : window(initWindow), player(initPlayer) {
 
+    showUnoButton = false;
+
     std::cout << "client start" << std::endl;
 
     if (player.isHost) {
@@ -25,13 +27,13 @@ int Client::lobby() {
 
     Card::loadAssets();
 
-    Card exempleCard(Card::Color::RED, Card::Value::ZERO, 0.8f);
+    Card exempleCard(Card::Color::RED, Card::Value::ZERO, 0.8f, SCREEN_WIDTH, SCREEN_HEIGHT);
     const int BUTTON_WIDTH = 404;
     const int BUTTON_HEIGHT = 107;
-    const int SCREEN_CENTER_X = SCREEN_WIDTH / 2 - BUTTON_WIDTH / 2;
-    const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2 - BUTTON_HEIGHT / 2;
+    const int SCREEN_CENTER_X = SCREEN_WIDTH / 2;
+    const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;
     int unoButtonArea = SCREEN_WIDTH / 2 - exempleCard.sprite.getGlobalBounds().width - 20;
-    unoButtonArea = unoButtonArea / 2 - BUTTON_WIDTH / 2;
+    unoButtonArea = unoButtonArea / 2;
 
     Sprite background;
     Sprite quitButton;
@@ -52,29 +54,32 @@ int Client::lobby() {
     background.sprite.setTexture(background.texture);
     background.sprite.setPosition(0,0);
 
-    initButton(startButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.4, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(startButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.4, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(quitButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(quitButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.7, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(startButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.5, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(startButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.5, sf::IntRect(98, 245, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(quitButton, buttonsTexture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.8, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(quitButtonH, buttonsTextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.8, sf::IntRect(98, 397, BUTTON_WIDTH, BUTTON_HEIGHT));
     initButton(drawButton, buttons4Texture, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.28, sf::IntRect(98, 247, BUTTON_WIDTH, BUTTON_HEIGHT));
     initButton(drawButtonH, buttons4TextureH, SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.28, sf::IntRect(98, 247, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(unoButton, buttons4Texture, unoButtonArea, SCREEN_HEIGHT / 2.4 - BUTTON_HEIGHT / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
-    initButton(unoButtonH, buttons4TextureH, unoButtonArea, SCREEN_HEIGHT / 2.4 - BUTTON_HEIGHT / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(unoButton, buttons4Texture, unoButtonArea, SCREEN_HEIGHT / 2.4 - quitButton.sprite.getGlobalBounds().height / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    initButton(unoButtonH, buttons4TextureH, unoButtonArea, SCREEN_HEIGHT / 2.4 - quitButton.sprite.getGlobalBounds().height / 2, sf::IntRect(98, 95, BUTTON_WIDTH, BUTTON_HEIGHT));
+    unoButton.sprite.setPosition(unoButtonArea / 2, SCREEN_HEIGHT / 2.4 - unoButton.sprite.getGlobalBounds().height / 2);
+    unoButtonH.sprite.setPosition(unoButtonArea / 2, SCREEN_HEIGHT / 2.4 - unoButton.sprite.getGlobalBounds().height / 2);
 
     sf::Event event;
     sf::Packet packet;
     sf::String playerList = "";
     sf::Font font;
+    int fontSize = 45 * ((float)SCREEN_WIDTH / 1920);
     int buttonHovered = 0;
     font.loadFromFile("assets/fonts/ArialCE.ttf");
 
-    sf::Text playerListT(playerList, font, 50);
+    sf::Text playerListT(playerList, font, fontSize);
     playerListT.setFillColor(sf::Color(0, 0, 0));
     playerListT.setPosition(100, 100);
 
     sf::String m1(L"Vous êtes l'hôte, votre adresse IP est ");
     sf::String m2(sf::IpAddress::getPublicAddress(sf::seconds(2)).toString() + ".\nN'oubliez pas d'ouvrir le port 2905 sur votre box.");
-    sf::Text ipAddressHelp(m1 + m2, font, 50);
+    sf::Text ipAddressHelp(m1 + m2, font, fontSize);
     ipAddressHelp.setFillColor(sf::Color(0, 0, 0));
     ipAddressHelp.setPosition (window.getSize().x - ipAddressHelp.getGlobalBounds().width - 100, 100);
 
@@ -178,7 +183,8 @@ void Client::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::I
     button.texture = texture;
     button.sprite.setTexture(button.texture);
     button.sprite.setTextureRect(textureRect);
-    button.sprite.setPosition(x, y);
+    button.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);
+    button.sprite.setPosition(x - button.sprite.getGlobalBounds().width / 2, y - button.sprite.getGlobalBounds().height / 2);
 }
 
 void Client::game() {
@@ -199,8 +205,10 @@ void Client::game() {
     playerList = new sf::Text[players.size()];
     initPlayerList(playerList, font);
 
-    topCard = Card(Card::Color::BLACK, Card::Value::BACK, 0.8f);
-    Card cardBack(Card::Color::BLACK, Card::Value::BACK, 0.8f);
+    sf::Text playerWonTest("", font, 50);
+
+    topCard = Card(Card::Color::BLACK, Card::Value::BACK, 0.8f, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Card cardBack(Card::Color::BLACK, Card::Value::BACK, 0.8f, SCREEN_WIDTH, SCREEN_HEIGHT);
     topCard.sprite.setPosition(SCREEN_WIDTH / 2 + 20, SCREEN_HEIGHT / 2.4 - topCard.sprite.getGlobalBounds().height / 2);
     cardBack.sprite.setPosition(SCREEN_WIDTH / 2 - cardBack.sprite.getGlobalBounds().width - 20, SCREEN_HEIGHT / 2.4 - cardBack.sprite.getGlobalBounds().height / 2);
 
@@ -229,7 +237,7 @@ void Client::game() {
             int spacing = SCREEN_WIDTH / (hand.size() + 1);
             int cardWidth = hand[0].sprite.getGlobalBounds().width;
             for (int i = 0; i < hand.size(); ++i) {
-                hand[i].sprite.setPosition(spacing * (i + 1) - hand[i].sprite.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.7);
+                hand[i].sprite.setPosition(spacing * (i + 1) - hand[i].sprite.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.75);
                 window.draw(hand[i].sprite);
             }
         }
@@ -280,7 +288,7 @@ void Client::processPacket(sf::Packet &packet) {
         case Server::PacketPrefix::CARD_DRAWN:
             packet >> color >> value >> ID;
             card = Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value));
-            if (player.getUniqueID() == ID) player.addCardToHand(Card(card.getColor(), card.getValue(), 0.5f));
+            if (player.getUniqueID() == ID) player.addCardToHand(Card(card.getColor(), card.getValue(), 0.5f, SCREEN_WIDTH, SCREEN_HEIGHT));
             for (Player &p : players)
                 if (p.getUniqueID() == ID) p.addCardToHand(card);
             for (auto card : player.getHand()) {
@@ -295,7 +303,7 @@ void Client::processPacket(sf::Packet &packet) {
             card = Card(static_cast<Card::Color>(color), static_cast<Card::Value>(value));
             for (Player& p : players)
                 if (p.getUniqueID() == ID) p.removeCardFromHand(card);
-            topCard = Card(card.getColor(), card.getValue(), 0.8f);
+            topCard = Card(card.getColor(), card.getValue(), 0.8f, SCREEN_WIDTH, SCREEN_HEIGHT);
             topCard.sprite.setPosition(SCREEN_WIDTH / 2 + 20, SCREEN_HEIGHT / 2.4 - topCard.sprite.getGlobalBounds().height / 2);
             topColor = topCard.getColor();
             break;
@@ -351,6 +359,10 @@ void Client::processPacket(sf::Packet &packet) {
             showUnoButton = true;
             unoClock.restart();
             player.isPlaying = false;
+            break;
+        case Server::PacketPrefix::PLAYER_WON:
+            packet >> ID;
+            std::cout << "client: player won: " << ID << std::endl;
             break;
     }
 }

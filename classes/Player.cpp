@@ -1,7 +1,7 @@
 #include "Player.h"
 
-Player::Player(std::string name) { this->name = name; }
-Player::Player() { }
+Player::Player(std::string name_i) : name(name_i) { score = 0; }
+Player::Player() { score = 0; }
 
 int Player::getUniqueID() { return this->uniqueID; }
 void Player::setUniqueID(int uniqueID) { this->uniqueID = uniqueID; }

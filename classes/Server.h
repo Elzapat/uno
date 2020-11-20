@@ -24,7 +24,8 @@ class Server {
             CHOOSE_COLOR,
             COLOR_CHOSEN,
             TOP_COLOR_CHANGE,
-            UNO
+            UNO,
+            PLAYER_WON
         };
         void                    lobby               ();
         void                    game                ();
@@ -47,6 +48,7 @@ class Server {
         void                    sendTurnInfo(std::vector<Player>::iterator& turnIt);
         void                    passTurn(std::vector<Player>::iterator& turnIt);
         bool                    drawACard(std::vector<Player>::iterator& player, Deck& drawDeck, Deck& playDeck);
+        void                    computeScores();
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "Card.h"
 #include "Deck.h"
 #include <iostream>
+#include <unistd.h>
 
 class Client {
 

@@ -15,16 +15,14 @@ class Card {
         enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
         enum Value { ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, DRAW_TWO, WILD, WILD_FOUR, BACK };
                     Card        ();
-                    Card        (Color color, Value value, float cardSize = 0);
+                    Card        (Color color, Value value, float cardSize = 0, int SCREEN_WIDTH = 0, int SCREEN_HEIGHT = 0);
         Color       getColor    ();
         Value       getValue    ();
         static void loadAssets  ();
         sf::Sprite  sprite;
 
     private:
-        int         uniqueID; // You wouldn't want to take that one red "2" card for the other red "2" card, would you ?
         std::string name; // Yup, they'll have a name, all  of 'em. ID never is enough.
-        int         score; // Yup, there's a scoring system in original uno rules.
         Color       color; // will take values 'r' 'y' 'b' and 'g'
         Value       value; // <-- Will also identify black cards with values such as 10 and 11
         static sf::Texture texture;

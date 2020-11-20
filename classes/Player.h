@@ -10,7 +10,7 @@ class Player {
 
     public:
                         Player          ();
-                        Player          (std::string name);
+                        Player          (std::string name_i);
         int             getUniqueID     ();
         void            setUniqueID     (int uniqueID);
         std::string     getName         ();

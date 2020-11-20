@@ -9,7 +9,6 @@ LIBS	 := -LSFML/sfml-widgets-master/lib -lsfml-widgets -LSFML/lib -lsfml-network
 uno.exe: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) $(LIBS) -o $(EXE) 
 	export LD_LIBRARY_PATH=./SFML/lib
-	rm *.o
 
 main.o: main.cpp uno.h
 	$(CC) $(INCLUDES) $(FLAGS) main.cpp
