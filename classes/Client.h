@@ -21,7 +21,7 @@ class Client {
     public:
         Client(sf::RenderWindow &initWindow, Player initPlayer);
         int lobby();
-        void game();
+        int game();
 
     private:
         sf::RenderWindow &window;
@@ -36,15 +36,15 @@ class Client {
         bool canPlay;
         bool alreadyDrew;
         bool showUnoButton;
+        bool chooseColor;
         sf::Clock unoClock;
         Sprite drawButton,
                drawButtonH,
                unoButton,
                unoButtonH;
-        bool chooseColor;
         void initPlayerList(sf::Text* playerList, sf::Font& font);
         void initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect);
-        void processPacket(sf::Packet &packet);
+        int processPacket(sf::Packet &packet);
         void processEvent(sf::Event event, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue);
         void processEvent(sf::Event event, int& hovered);
 };

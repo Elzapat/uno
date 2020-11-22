@@ -32,7 +32,7 @@ class Player {
     private:
         int             uniqueID;
         std::string     name;
-        int             score;
+        int             score = 0;
         std::string     address;
         std::string     hostAddress;
         std::vector<Card> hand;

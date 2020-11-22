@@ -13,7 +13,7 @@ Player Menu::initMenu() {
     const int SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;
 
     sf::Image icon = sf::Image{};
-    icon.loadFromFile("assets/sprites/card_back.png");
+    icon.loadFromFile("assets/sprites/icon.png");
     
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 

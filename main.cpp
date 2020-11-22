@@ -1,4 +1,5 @@
 #include "uno.h"
+#include "UnoConfig.h"
 
 int main() {
 
@@ -21,10 +22,11 @@ int main() {
             serverThread.detach();
         }
 
-        if (window.isOpen()) {
-            Client *client = new Client(window, player);
+        Client *client = new Client(window, player);
+        while (window.isOpen()) {
             int action = client->lobby();
-            if (action == 1);
+            if (action == 1) break;
+            else if (action == 2) continue;
         }
     }
 }

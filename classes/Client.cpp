@@ -104,7 +104,7 @@ int Client::lobby() {
 
         playerList = L"Joueurs présents :\n";
         for (auto p : players)
-            playerList += "- " + p.getName() + '\n';
+            playerList += "- " + p.getName() + " (" + std::to_string(p.getScore()) + ')' + '\n';
         playerListT.setString(playerList);
         window.draw(playerListT);
 
@@ -128,6 +128,7 @@ int Client::lobby() {
                                 Server::PacketPrefix prefix = Server::PacketPrefix::GAME_START;
                                 gameStartPacket << static_cast<int>(prefix);
                                 player.getSocket()->send(gameStartPacket);
+                                int action = 1;
                                 game();
                                 return 2;
                             }
@@ -168,7 +169,9 @@ int Client::lobby() {
                     }
                     break;
                 case Server::PacketPrefix::GAME_START:
-                    game();
+                    int action;
+                    action = game();
+                    if (action = 2) return 2;
                     break;
 
             }
@@ -187,7 +190,7 @@ void Client::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::I
     button.sprite.setPosition(x - button.sprite.getGlobalBounds().width / 2, y - button.sprite.getGlobalBounds().height / 2);
 }
 
-void Client::game() {
+int Client::game() {
 
     background.texture.loadFromFile("assets/sprites/game_background.jpg");
     background.sprite.setTexture(background.texture);
@@ -264,7 +267,11 @@ void Client::game() {
             player.getSocket()->send(unoPacket);
         }
 
-        if (player.getSocket()->receive(packet) == sf::Socket::Done) processPacket(packet);
+        int action;
+        if (player.getSocket()->receive(packet) == sf::Socket::Done) action = processPacket(packet);
+        if (action == 2) {
+            return 2;
+        }
         while (window.pollEvent(event)) {
             if (chooseColor) processEvent(event, red.getGlobalBounds(), yellow.getGlobalBounds(), green.getGlobalBounds(), blue.getGlobalBounds());
             else processEvent(event, hovered);
@@ -273,15 +280,17 @@ void Client::game() {
         window.display();
     }
     delete[] playerList;
+    return 0;
 }
 
-void Client::processPacket(sf::Packet &packet) {
+int Client::processPacket(sf::Packet &packet) {
 
     int prefix;
     Card card;
     int ID;
     int i = 0;
     int color, value;
+    int score;
 
     packet >> prefix;
     switch (static_cast<Server::PacketPrefix>(prefix)) {
@@ -308,6 +317,7 @@ void Client::processPacket(sf::Packet &packet) {
             topColor = topCard.getColor();
             break;
         case Server::PacketPrefix::TURN_INFO:
+            std::cout << "client: received turn info" << std::endl;
             packet >> ID;
             i = 0;
             canPlay = true;
@@ -326,14 +336,17 @@ void Client::processPacket(sf::Packet &packet) {
                     for (auto card : player.getHand())  {
                         if (card.getValue() == topCard.getValue() || card.getColor() == topCard.getColor() || card.getColor() == Card::Color::BLACK || (topCard.getColor() == Card::Color::BLACK && card.getColor() == topColor)) {
                             canPlay = true;
+                            alreadyDrew = true;
                             break;
-                        } else canPlay = false;
+                        } else {
+                            canPlay = false;
+                            alreadyDrew = false;
+                        }
                     }
                 }
                 else player.isPlaying = false;
                 i++;
             }
-            alreadyDrew = false;
             break;
         case Server::PacketPrefix::CHOOSE_COLOR:
             chooseColor = true; 
@@ -360,11 +373,39 @@ void Client::processPacket(sf::Packet &packet) {
             unoClock.restart();
             player.isPlaying = false;
             break;
+        case Server::PacketPrefix::PLAYER_SCORE:
+            packet >> ID;
+            packet >> score;
+            for (Player &p : players) {
+                if (ID == p.getUniqueID()) p.setScore(score);
+            }
+            break;
         case Server::PacketPrefix::PLAYER_WON:
             packet >> ID;
             std::cout << "client: player won: " << ID << std::endl;
+
+            std::string winner;
+
+            for (auto p : players) {
+                if (ID == p.getUniqueID()) {
+                    winner = p.getName();
+                    break;
+                }
+            }
+
+            sf::Font font;
+            font.loadFromFile("assets/fonts/ArialCE.ttf");
+
+            sf::Text winnerText(winner + " gagne !", font, 40 * ((float)SCREEN_WIDTH / 1920));
+            winnerText.setFillColor(sf::Color(0, 0, 0));
+            winnerText.setPosition(SCREEN_WIDTH / 2 - winnerText.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.2);
+            window.draw(winnerText);
+            window.display();
+            sleep(5);
+            return 2;
             break;
     }
+    return 0;
 }
 
 void Client::processEvent(sf::Event event, int& hovered) {
@@ -448,7 +489,7 @@ void Client::initPlayerList(sf::Text* playerList, sf::Font &font) {
     int spacing = SCREEN_WIDTH / (players.size() + 1);
     for (auto p : players) {
         playerList[i] = sf::Text(p.getName(), font, 30);
-        playerList[i].setPosition(spacing * (i + 1) - playerList[i].getGlobalBounds().width / 2, 100);
+        playerList[i].setPosition(spacing * (i + 1) - playerList[i].getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.1);
         i++;
     }
 }

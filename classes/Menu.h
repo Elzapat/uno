@@ -5,9 +5,9 @@
 #include "../SFML/include/SFML/Window.hpp"
 #include "../SFML/include/SFML/Graphics.hpp"
 #include "../SFML/include/SFML/Network.hpp"
-#include "../SFML/sfml-widgets-master/src/Gui/Menu.hpp"
-#include "../SFML/sfml-widgets-master/src/Gui/Theme.hpp"
-#include "../SFML/sfml-widgets-master/src/Gui/Gui.hpp"
+#include "../SFML/sfml-widgets/src/Gui/Menu.hpp"
+#include "../SFML/sfml-widgets/src/Gui/Theme.hpp"
+#include "../SFML/sfml-widgets/src/Gui/Gui.hpp"
 #include "functions.h"
 #include "Server.h"
 #include <iostream>
