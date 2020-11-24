@@ -135,7 +135,7 @@ void Server::game() {
 void Server::dealSevenCards(Deck &deck) {
 
     for (auto &player : players) {
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 7; ++i) {
             Card drawnCard = deck.draw();
             PacketPrefix prefix = CARD_DRAWN;
             sf::Packet initialDrawPacket;

@@ -41,6 +41,8 @@ class Menu {
         bool             isHost = false;
         int              SCREEN_WIDTH;
         int              SCREEN_HEIGHT;
+        int              OG_SCREEN_WIDTH;
+        int              OG_SCREEN_HEIGHT;
         sf::TcpSocket    *socket;
         sf::TcpListener  *listener;
         Sprite           playButton,

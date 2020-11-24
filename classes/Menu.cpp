@@ -6,6 +6,8 @@ Player Menu::initMenu() {
 
     SCREEN_WIDTH = window.getSize().x;
     SCREEN_HEIGHT = window.getSize().y;
+    OG_SCREEN_WIDTH = SCREEN_WIDTH;
+    OG_SCREEN_HEIGHT = SCREEN_HEIGHT;
 
     const int BUTTON_WIDTH = 404;
     const int BUTTON_HEIGHT = 107;
@@ -27,6 +29,7 @@ Player Menu::initMenu() {
 
     logo.texture.loadFromFile("assets/sprites/uno.png");
     logo.sprite.setTexture(logo.texture);
+    logo.texture.setSmooth(true);
     logo.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);
     logo.sprite.setPosition((SCREEN_WIDTH / 2) - (logo.sprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 3.7) - (logo.sprite.getGlobalBounds().height / 2));
     window.draw(logo.sprite);
@@ -146,6 +149,36 @@ void Menu::listenForInputs() {
                         }
                     }
                     break;
+                    
+                case sf::Event::Resized:
+                    window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                    
+                    float ratioX = event.size.width / (float)SCREEN_WIDTH;
+                    float ratioY = event.size.height / (float)SCREEN_HEIGHT;
+                    int old_width = SCREEN_WIDTH;
+                    int old_height = SCREEN_HEIGHT;
+                    SCREEN_WIDTH = event.size.width;
+                    SCREEN_HEIGHT = event.size.height;
+
+                    quitButton.sprite.scale(ratioX, ratioY);
+                    quitButtonH.sprite.scale(ratioX, ratioY);
+                    settingsButton.sprite.scale(ratioX, ratioY);
+                    settingsButtonH.sprite.scale(ratioX, ratioY);
+                    playButton.sprite.scale(ratioX, ratioY);
+                    playButtonH.sprite.scale(ratioX, ratioY);
+                    logo.sprite.scale(ratioX, ratioY);
+
+                    int posX = event.size.width / 2 - quitButton.sprite.getGlobalBounds().width / 2;
+                    quitButton.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.6);
+                    quitButtonH.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.6);
+                    settingsButton.sprite.setPosition(posX, (SCREEN_HEIGHT/ 2) * 1.3);
+                    settingsButtonH.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.3);
+                    playButton.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.0);
+                    playButtonH.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.0);
+                    logo.sprite.setPosition(SCREEN_WIDTH / 2 - logo.sprite.getGlobalBounds().width / 2, SCREEN_HEIGHT / 3.8 - logo.sprite.getGlobalBounds().height / 2);
+
+                    break;
+                    
             }
         }
 
@@ -160,6 +193,7 @@ void Menu::listenForInputs() {
 void Menu::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect) {
 
     button.texture = texture;
+    button.texture.setSmooth(true);
     button.sprite.setTexture(button.texture);
     button.sprite.setTextureRect(textureRect);
     button.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);
@@ -167,6 +201,11 @@ void Menu::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::Int
 }
 
 int Menu::settings() {
+
+    backButton.sprite.scale((float)SCREEN_WIDTH / OG_SCREEN_WIDTH, (float)SCREEN_HEIGHT / OG_SCREEN_HEIGHT);
+    backButton.sprite.setPosition(SCREEN_WIDTH / 2 - backButton.sprite.getGlobalBounds().width / 2, (SCREEN_HEIGHT / 2) * 1.6);
+    backButtonH.sprite.scale((float)SCREEN_WIDTH / OG_SCREEN_WIDTH, (float)SCREEN_HEIGHT / OG_SCREEN_HEIGHT);
+    backButtonH.sprite.setPosition(SCREEN_WIDTH / 2 - backButton.sprite.getGlobalBounds().width / 2, (SCREEN_HEIGHT / 2) * 1.6);
 
     sf::RectangleShape backRect(sf::Vector2f(1000 * ((float)SCREEN_WIDTH / 1920), 600 * ((float)SCREEN_HEIGHT / 1080)));
     backRect.setFillColor(sf::Color(15, 57, 84));
@@ -227,6 +266,24 @@ int Menu::settings() {
                             return 0;
                         }
                     }
+                    break;
+                case sf::Event::Resized:
+                    window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+
+                    float ratioX = event.size.width / (float)SCREEN_WIDTH;
+                    float ratioY = event.size.height / (float)SCREEN_HEIGHT;
+
+                    SCREEN_WIDTH = event.size.width;
+                    SCREEN_HEIGHT = event.size.height;
+
+                    backRect.scale(ratioX, ratioY);
+                    backButton.sprite.scale(ratioX, ratioY);
+                    backButtonH.sprite.scale(ratioX, ratioY);
+
+                    int posX = SCREEN_WIDTH / 2 - backButton.sprite.getGlobalBounds().width / 2;
+                    backButton.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.6);
+                    backButtonH.sprite.setPosition(posX, (SCREEN_HEIGHT / 2) * 1.6);
+                    backRect.setPosition(SCREEN_WIDTH / 2 - backRect.getGlobalBounds().width, (SCREEN_HEIGHT / 2) * 2.7 - backRect.getGlobalBounds().height / 2);
                     break;
             }
         }

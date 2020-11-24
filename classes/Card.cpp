@@ -20,6 +20,7 @@ Card::Card(Color colorI, Value valueI, float cardSize, int SCREEN_WIDTH, int SCR
         }
         int cardWidth = texture.getSize().x / 14;
         int cardHeight = texture.getSize().y / 8;
+        texture.setSmooth(true);
         sprite.setTexture(texture);
         if (color == Color::BLACK) {
             if (value == Value::WILD) sprite.setTextureRect(sf::IntRect(13 * cardWidth, 0, cardWidth, cardHeight));

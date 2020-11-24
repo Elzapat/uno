@@ -184,6 +184,7 @@ int Client::lobby() {
 void Client::initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect) {
 
     button.texture = texture;
+    button.texture.setSmooth(true);
     button.sprite.setTexture(button.texture);
     button.sprite.setTextureRect(textureRect);
     button.sprite.scale((float)SCREEN_WIDTH / 1920, (float)SCREEN_HEIGHT / 1080);

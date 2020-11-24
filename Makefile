@@ -304,6 +304,33 @@ classes/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Server.cpp.s
 .PHONY : classes/Server.cpp.s
 
+classes/functions.o: classes/functions.cpp.o
+
+.PHONY : classes/functions.o
+
+# target to build an object file
+classes/functions.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.o
+.PHONY : classes/functions.cpp.o
+
+classes/functions.i: classes/functions.cpp.i
+
+.PHONY : classes/functions.i
+
+# target to preprocess a source file
+classes/functions.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.i
+.PHONY : classes/functions.cpp.i
+
+classes/functions.s: classes/functions.cpp.s
+
+.PHONY : classes/functions.s
+
+# target to generate assembly for a file
+classes/functions.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.s
+.PHONY : classes/functions.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -358,6 +385,9 @@ help:
 	@echo "... classes/Server.o"
 	@echo "... classes/Server.i"
 	@echo "... classes/Server.s"
+	@echo "... classes/functions.o"
+	@echo "... classes/functions.i"
+	@echo "... classes/functions.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -15,6 +15,7 @@ int main() {
 
     while (window.isOpen()) {
         Player player = menu.initMenu();
+        if (!window.isOpen()) break;
 
         if (player.isHost && window.isOpen()) {
             Server *server = new Server(listener);
@@ -28,5 +29,6 @@ int main() {
             if (action == 1) break;
             else if (action == 2) continue;
         }
+        delete client;
     }
 }
