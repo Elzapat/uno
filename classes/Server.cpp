@@ -26,8 +26,6 @@ void Server::lobby() {
 
     bool running = true;
 
-    std::cout << "server: lobby started" << std::endl;
-    for (auto p : players) std::cout << "server: player: " << p.getName() << std::endl;
 
     while (running) {
         if (selector.wait()) {
@@ -79,6 +77,7 @@ void Server::lobby() {
                                 }
                                 game();
                                 std::cout << "server: game finished" << std::endl;
+                                for (auto p : players) std::cout << "server: player: " << p.getName() << std::endl;
                             }
                         } else if (status == sf::Socket::Disconnected) {
                             sf::Packet packet;
@@ -122,9 +121,10 @@ void Server::game() {
                     if (status == sf::Socket::Done) {
                         int action;
                         action = processPacket(packet, it, turnIt, playDeck, drawDeck, wildFourChosen);
-                        std::cout << "server: action going out of processPacket: " << action << std::endl;
-                        if (action == 2) return;
-                        else continue;
+                        if (action == 2) {
+                            std::cout << "server: action 2 choosen" << std::endl;
+                            running = false;
+                        } else continue;
                     } else if (status = sf::Socket::Disconnected) playerDisconnected(*it);
                 }
             }
@@ -225,15 +225,10 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
                     return 2;
                 }
 
-                std::cout << "server: pass extra turn: " <<passExtraTurn << std::endl;
-                std::cout << "server: choose color: " << choosingColor << std::endl;
-                std::cout << "server: going through uno: " << goingThroughUno << std::endl;
                 if (passExtraTurn && !goingThroughUno) passTurn(turnIt);
                 for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
-                if (!goingThroughUno && !choosingColor) {
-                    std::cout << "server: passing turn normally";
-                    passTurn(turnIt);
-                }
+                if (!goingThroughUno && !choosingColor) passTurn(turnIt);
+               
                 break;
             } 
             break;

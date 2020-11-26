@@ -10,6 +10,7 @@
 #include "Deck.h"
 #include <iostream>
 #include <unistd.h>
+#include <math.h>
 
 class Client {
 
@@ -37,6 +38,9 @@ class Client {
         bool alreadyDrew;
         bool showUnoButton;
         bool chooseColor;
+        bool movingCard;
+        sf::Vector2f mousePos;
+        Card* cardPicked;
         sf::Clock unoClock;
         Sprite drawButton,
                drawButtonH,
@@ -47,6 +51,11 @@ class Client {
         int processPacket(sf::Packet &packet);
         void processEvent(sf::Event event, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue);
         void processEvent(sf::Event event, int& hovered);
+        void drawEverything(int hovered = 0); 
+        std::map<std::string, sf::RectangleShape> colorRects;
+        void drawAnimation();
+        void rearrangeHandAnimation();
+        void cardPlayedAnimation();
 };
 
 #endif

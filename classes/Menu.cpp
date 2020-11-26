@@ -408,7 +408,7 @@ int Menu::joinGame(bool &emptyName) {
     invalidAddressWarning.setFillColor(sf::Color(255, 0, 0));
     invalidAddressWarning.setPosition(SCREEN_WIDTH / 2 - invalidAddressWarning.getGlobalBounds().width / 2, SCREEN_HEIGHT / 1.9);
 
-    sf::Text connectFailWarning(L"La connection a échoué, réessayez ou vérifiez l'adresse IP.", gui::Theme::getFont(), 30);
+    sf::Text connectFailWarning(L"La connection a échouée, réessayez ou vérifiez l'adresse IP.", gui::Theme::getFont(), 30);
     connectFailWarning.setFillColor(sf::Color(255, 0, 0));
     connectFailWarning.setPosition(SCREEN_WIDTH / 2 - connectFailWarning.getGlobalBounds().width / 2, SCREEN_HEIGHT / 1.9);
 
