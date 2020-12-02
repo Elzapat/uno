@@ -39,6 +39,7 @@ class Menu {
         std::string      playerName = "";
         std::string      hostIpAddress = "";
         bool             isHost = false;
+        bool             enableAnimation;
         int              SCREEN_WIDTH;
         int              SCREEN_HEIGHT;
         int              OG_SCREEN_WIDTH;

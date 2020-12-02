@@ -78,6 +78,7 @@ void Server::lobby() {
                                 game();
                                 std::cout << "server: game finished" << std::endl;
                                 for (auto p : players) std::cout << "server: player: " << p.getName() << std::endl;
+                                for (auto& p : players) p.getHand().clear();
                             }
                         } else if (status == sf::Socket::Disconnected) {
                             sf::Packet packet;

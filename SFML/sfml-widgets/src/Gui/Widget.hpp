@@ -71,9 +71,10 @@ public:
     virtual void onKeyReleased(const sf::Event::KeyEvent& key);
     virtual void onTextEntered(sf::Uint32 unicode);
 
-public:
     void setSize(const sf::Vector2f& size);
     void setSize(float widget, float height);
+
+public:
 
     friend class Layout;
     friend class FormLayout;

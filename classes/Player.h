@@ -28,6 +28,7 @@ class Player {
         std::vector<Card>& getHand       ();
         bool            isHost;
         bool            isPlaying;
+        bool            usesAnimations;
 
     private:
         int             uniqueID;

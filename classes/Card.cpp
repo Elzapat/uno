@@ -10,6 +10,7 @@ void Card::loadAssets () {
 
 Card::Card() {}
 Card::Card(Color colorI, Value valueI, float cardSize, int SCREEN_WIDTH, int SCREEN_HEIGHT) : color(colorI), value(valueI) {
+    srand(time(NULL));
 
     if (cardSize != 0) {
         if (color == Color::BLACK && value == Value::BACK) {
@@ -29,10 +30,13 @@ Card::Card(Color colorI, Value valueI, float cardSize, int SCREEN_WIDTH, int SCR
         sf::Vector2f scale = sprite.getScale();
         sprite.setScale(scale.x * cardSize * ((float)SCREEN_WIDTH / 1920), scale.y * cardSize * ((float)SCREEN_HEIGHT / 1080));
     }
+    this->uniqueID = rand() % 100000;
 }
 
 Card::Color Card::getColor() { return this->color; }
 Card::Value Card::getValue() { return this->value; }
+void Card::setUniqueID(int ID) { this->uniqueID = ID; }
+int Card::getUniqueID() const { return this->uniqueID; }
 
 sf::Packet& operator << (sf::Packet& packet, Card card) {
     return packet << static_cast<int>(card.getColor()) << static_cast<int>(card.getValue());

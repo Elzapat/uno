@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(sf::RenderWindow &initWindow, sf::TcpListener *initListener) : window(initWindow), listener(initListener) {};
+Menu::Menu(sf::RenderWindow &initWindow, sf::TcpListener *initListener) : window(initWindow), listener(initListener), enableAnimation(true) {};
 
 Player Menu::initMenu() {
 
@@ -80,6 +80,7 @@ Player Menu::initMenu() {
     player.setHostAddress(hostIpAddress);
     player.isHost = isHost;
     player.setSocket(socket);
+    player.usesAnimations = enableAnimation;
 
     return player;
 }
@@ -220,7 +221,7 @@ int Menu::settings() {
 
     sf::Text nameText("Votre pseudo est : " + playerName, gui::Theme::getFont(), 30);
     nameText.setFillColor(sf::Color(0, 0, 0));
-    nameText.setPosition(backRect.getPosition().x + 50, backRect.getPosition().y + 100);
+    nameText.setPosition(backRect.getPosition().x + 50, backRect.getPosition().y + backRect.getGlobalBounds().height - 50 - nameText.getGlobalBounds().height);
 
     gui::TextBox *nameTextbox = new gui::TextBox(300);
     nameTextbox->setText(playerName);
@@ -230,7 +231,17 @@ int Menu::settings() {
         playerName = nameTextbox->getText().toAnsiString();
         nameText.setString("Votre pseudo est : " + playerName);
     });
+
+    gui::CheckBox* animationCheckbox = new gui::CheckBox(enableAnimation);
+    animationCheckbox->setCallback([&]() {
+            if (animationCheckbox->isChecked())
+                enableAnimation = true;
+            else enableAnimation = false;
+        });
+    animationCheckbox->setSize(sf::Vector2f(200, 200));
+
     form->addRow("Pseudo ", nameTextbox);
+    form->addRow("Activer les animations ", animationCheckbox);
 
     sf::Event event;
     int buttonHovered = 0;

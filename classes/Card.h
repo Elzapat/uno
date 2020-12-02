@@ -7,6 +7,8 @@
 #include "../SFML/include/SFML/Network.hpp"
 #include <string>
 #include <iostream>
+#include <time.h>
+#include <cstdlib>
 
 
 class Card {
@@ -20,11 +22,14 @@ class Card {
         Value       getValue    ();
         static void loadAssets  ();
         sf::Sprite  sprite;
+        void        setUniqueID (int ID);
+        int         getUniqueID () const;
 
     private:
         std::string name; // Yup, they'll have a name, all  of 'em. ID never is enough.
         Color       color; // will take values 'r' 'y' 'b' and 'g'
         Value       value; // <-- Will also identify black cards with values such as 10 and 11
+        int         uniqueID;
         static sf::Texture texture;
         static sf::Texture backTexture;
 };

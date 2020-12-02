@@ -4,6 +4,7 @@
 #include "../SFML/include/SFML/System.hpp"
 #include "../SFML/include/SFML/Window.hpp"
 #include "../SFML/include/SFML/Graphics.hpp"
+#include "../SFML/include/SFML/Audio.hpp"
 #include "Player.h"
 #include "Server.h"
 #include "Card.h"
@@ -11,12 +12,17 @@
 #include <iostream>
 #include <unistd.h>
 #include <math.h>
+#include <map>
 
 class Client {
 
     struct Sprite {
         sf::Texture texture;
         sf::Sprite sprite;
+    };
+    struct Sound {
+        sf::SoundBuffer buffer;
+        sf::Sound sound;
     };
 
     public:
@@ -31,6 +37,7 @@ class Client {
         std::vector<Player> players;
         sf::Text *playerList;
         Player player;
+        std::map<std::string, Sound> sounds;
         Sprite background;
         Card topCard;
         Card::Color topColor;
@@ -55,7 +62,8 @@ class Client {
         std::map<std::string, sf::RectangleShape> colorRects;
         void drawAnimation();
         void rearrangeHandAnimation();
-        void cardPlayedAnimation();
+        void cardPlayedAnimation(Card& card);
+        void putCardBackInHandAnimation(Card& card); 
 };
 
 #endif
