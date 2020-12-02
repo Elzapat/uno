@@ -1,2 +1,0 @@
-#define Uno_VERSION_MAJOR 1
-#define UNO_VERSION_MINOR 0
