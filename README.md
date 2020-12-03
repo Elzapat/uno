@@ -1,2 +1,2 @@
 # Uno
-Network Uno game in C++
+Multiplayer Uno game in C++ with SFML
