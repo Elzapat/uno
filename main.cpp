@@ -1,5 +1,4 @@
 #include "uno.h"
-#include "UnoConfig.h"
 
 int main() {
 

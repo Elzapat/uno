@@ -4,7 +4,6 @@
 #include <iostream>
 #include <thread>
 
-#include "classes/Game.h"
 #include "classes/Player.h"
 #include "classes/Card.h"
 #include "classes/Menu.h"
