@@ -4,12 +4,12 @@
 #include <iostream>
 #include <thread>
 
-#include "classes/Player.h"
-#include "classes/Card.h"
-#include "classes/Menu.h"
-#include "classes/Deck.h"
-#include "classes/Server.h"
-#include "classes/Client.h"
+#include "src/Player.h"
+#include "src/Card.h"
+#include "src/Menu.h"
+#include "src/Deck.h"
+#include "src/Server.h"
+#include "src/Client.h"
 
 #define MAX_SIZE 30
 

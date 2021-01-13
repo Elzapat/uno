@@ -41,6 +41,7 @@ class Server {
         sf::TcpListener         &listener;
         sf::SocketSelector      selector;
         Card::Color             topColor;
+        int                     nbDrawCard;
         bool                    listenerBound = false;
         bool                    passExtraTurn = false;
         bool                    reverseTurn = false;
@@ -48,9 +49,10 @@ class Server {
         bool                    choosingColor = false;
         bool                    goingThroughUno = false;
         bool                    pressedUno = false;
+        bool                    wildFourChosen = false;
         void                    dealSevenCards(Deck &deck);
         void                    drawFirstCard(Deck &drawDeck, Deck &playDeck);
-        int                     processPacket(sf::Packet& packet, std::vector<Player>::iterator& player, std::vector<Player>::iterator& turnIt, Deck& playDeck, Deck& drawDeck, bool& wildFourChosen);
+        int                     processPacket(sf::Packet& packet, std::vector<Player>::iterator& player, std::vector<Player>::iterator& turnIt, Deck& playDeck, Deck& drawDeck);
         void                    playerDisconnected(Player player);
         void                    sendTurnInfo(std::vector<Player>::iterator& turnIt);
         void                    passTurn(std::vector<Player>::iterator& turnIt);

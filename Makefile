@@ -142,195 +142,6 @@ Uno/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/build
 .PHONY : Uno/fast
 
-classes/Card.o: classes/Card.cpp.o
-
-.PHONY : classes/Card.o
-
-# target to build an object file
-classes/Card.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Card.cpp.o
-.PHONY : classes/Card.cpp.o
-
-classes/Card.i: classes/Card.cpp.i
-
-.PHONY : classes/Card.i
-
-# target to preprocess a source file
-classes/Card.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Card.cpp.i
-.PHONY : classes/Card.cpp.i
-
-classes/Card.s: classes/Card.cpp.s
-
-.PHONY : classes/Card.s
-
-# target to generate assembly for a file
-classes/Card.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Card.cpp.s
-.PHONY : classes/Card.cpp.s
-
-classes/Client.o: classes/Client.cpp.o
-
-.PHONY : classes/Client.o
-
-# target to build an object file
-classes/Client.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Client.cpp.o
-.PHONY : classes/Client.cpp.o
-
-classes/Client.i: classes/Client.cpp.i
-
-.PHONY : classes/Client.i
-
-# target to preprocess a source file
-classes/Client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Client.cpp.i
-.PHONY : classes/Client.cpp.i
-
-classes/Client.s: classes/Client.cpp.s
-
-.PHONY : classes/Client.s
-
-# target to generate assembly for a file
-classes/Client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Client.cpp.s
-.PHONY : classes/Client.cpp.s
-
-classes/Deck.o: classes/Deck.cpp.o
-
-.PHONY : classes/Deck.o
-
-# target to build an object file
-classes/Deck.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Deck.cpp.o
-.PHONY : classes/Deck.cpp.o
-
-classes/Deck.i: classes/Deck.cpp.i
-
-.PHONY : classes/Deck.i
-
-# target to preprocess a source file
-classes/Deck.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Deck.cpp.i
-.PHONY : classes/Deck.cpp.i
-
-classes/Deck.s: classes/Deck.cpp.s
-
-.PHONY : classes/Deck.s
-
-# target to generate assembly for a file
-classes/Deck.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Deck.cpp.s
-.PHONY : classes/Deck.cpp.s
-
-classes/Menu.o: classes/Menu.cpp.o
-
-.PHONY : classes/Menu.o
-
-# target to build an object file
-classes/Menu.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Menu.cpp.o
-.PHONY : classes/Menu.cpp.o
-
-classes/Menu.i: classes/Menu.cpp.i
-
-.PHONY : classes/Menu.i
-
-# target to preprocess a source file
-classes/Menu.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Menu.cpp.i
-.PHONY : classes/Menu.cpp.i
-
-classes/Menu.s: classes/Menu.cpp.s
-
-.PHONY : classes/Menu.s
-
-# target to generate assembly for a file
-classes/Menu.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Menu.cpp.s
-.PHONY : classes/Menu.cpp.s
-
-classes/Player.o: classes/Player.cpp.o
-
-.PHONY : classes/Player.o
-
-# target to build an object file
-classes/Player.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Player.cpp.o
-.PHONY : classes/Player.cpp.o
-
-classes/Player.i: classes/Player.cpp.i
-
-.PHONY : classes/Player.i
-
-# target to preprocess a source file
-classes/Player.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Player.cpp.i
-.PHONY : classes/Player.cpp.i
-
-classes/Player.s: classes/Player.cpp.s
-
-.PHONY : classes/Player.s
-
-# target to generate assembly for a file
-classes/Player.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Player.cpp.s
-.PHONY : classes/Player.cpp.s
-
-classes/Server.o: classes/Server.cpp.o
-
-.PHONY : classes/Server.o
-
-# target to build an object file
-classes/Server.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Server.cpp.o
-.PHONY : classes/Server.cpp.o
-
-classes/Server.i: classes/Server.cpp.i
-
-.PHONY : classes/Server.i
-
-# target to preprocess a source file
-classes/Server.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Server.cpp.i
-.PHONY : classes/Server.cpp.i
-
-classes/Server.s: classes/Server.cpp.s
-
-.PHONY : classes/Server.s
-
-# target to generate assembly for a file
-classes/Server.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/Server.cpp.s
-.PHONY : classes/Server.cpp.s
-
-classes/functions.o: classes/functions.cpp.o
-
-.PHONY : classes/functions.o
-
-# target to build an object file
-classes/functions.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.o
-.PHONY : classes/functions.cpp.o
-
-classes/functions.i: classes/functions.cpp.i
-
-.PHONY : classes/functions.i
-
-# target to preprocess a source file
-classes/functions.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.i
-.PHONY : classes/functions.cpp.i
-
-classes/functions.s: classes/functions.cpp.s
-
-.PHONY : classes/functions.s
-
-# target to generate assembly for a file
-classes/functions.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/classes/functions.cpp.s
-.PHONY : classes/functions.cpp.s
-
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -358,6 +169,195 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/Card.o: src/Card.cpp.o
+
+.PHONY : src/Card.o
+
+# target to build an object file
+src/Card.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Card.cpp.o
+.PHONY : src/Card.cpp.o
+
+src/Card.i: src/Card.cpp.i
+
+.PHONY : src/Card.i
+
+# target to preprocess a source file
+src/Card.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Card.cpp.i
+.PHONY : src/Card.cpp.i
+
+src/Card.s: src/Card.cpp.s
+
+.PHONY : src/Card.s
+
+# target to generate assembly for a file
+src/Card.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Card.cpp.s
+.PHONY : src/Card.cpp.s
+
+src/Client.o: src/Client.cpp.o
+
+.PHONY : src/Client.o
+
+# target to build an object file
+src/Client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Client.cpp.o
+.PHONY : src/Client.cpp.o
+
+src/Client.i: src/Client.cpp.i
+
+.PHONY : src/Client.i
+
+# target to preprocess a source file
+src/Client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Client.cpp.i
+.PHONY : src/Client.cpp.i
+
+src/Client.s: src/Client.cpp.s
+
+.PHONY : src/Client.s
+
+# target to generate assembly for a file
+src/Client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Client.cpp.s
+.PHONY : src/Client.cpp.s
+
+src/Deck.o: src/Deck.cpp.o
+
+.PHONY : src/Deck.o
+
+# target to build an object file
+src/Deck.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Deck.cpp.o
+.PHONY : src/Deck.cpp.o
+
+src/Deck.i: src/Deck.cpp.i
+
+.PHONY : src/Deck.i
+
+# target to preprocess a source file
+src/Deck.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Deck.cpp.i
+.PHONY : src/Deck.cpp.i
+
+src/Deck.s: src/Deck.cpp.s
+
+.PHONY : src/Deck.s
+
+# target to generate assembly for a file
+src/Deck.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Deck.cpp.s
+.PHONY : src/Deck.cpp.s
+
+src/Menu.o: src/Menu.cpp.o
+
+.PHONY : src/Menu.o
+
+# target to build an object file
+src/Menu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Menu.cpp.o
+.PHONY : src/Menu.cpp.o
+
+src/Menu.i: src/Menu.cpp.i
+
+.PHONY : src/Menu.i
+
+# target to preprocess a source file
+src/Menu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Menu.cpp.i
+.PHONY : src/Menu.cpp.i
+
+src/Menu.s: src/Menu.cpp.s
+
+.PHONY : src/Menu.s
+
+# target to generate assembly for a file
+src/Menu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Menu.cpp.s
+.PHONY : src/Menu.cpp.s
+
+src/Player.o: src/Player.cpp.o
+
+.PHONY : src/Player.o
+
+# target to build an object file
+src/Player.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Player.cpp.o
+.PHONY : src/Player.cpp.o
+
+src/Player.i: src/Player.cpp.i
+
+.PHONY : src/Player.i
+
+# target to preprocess a source file
+src/Player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Player.cpp.i
+.PHONY : src/Player.cpp.i
+
+src/Player.s: src/Player.cpp.s
+
+.PHONY : src/Player.s
+
+# target to generate assembly for a file
+src/Player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Player.cpp.s
+.PHONY : src/Player.cpp.s
+
+src/Server.o: src/Server.cpp.o
+
+.PHONY : src/Server.o
+
+# target to build an object file
+src/Server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Server.cpp.o
+.PHONY : src/Server.cpp.o
+
+src/Server.i: src/Server.cpp.i
+
+.PHONY : src/Server.i
+
+# target to preprocess a source file
+src/Server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Server.cpp.i
+.PHONY : src/Server.cpp.i
+
+src/Server.s: src/Server.cpp.s
+
+.PHONY : src/Server.s
+
+# target to generate assembly for a file
+src/Server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/Server.cpp.s
+.PHONY : src/Server.cpp.s
+
+src/functions.o: src/functions.cpp.o
+
+.PHONY : src/functions.o
+
+# target to build an object file
+src/functions.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/functions.cpp.o
+.PHONY : src/functions.cpp.o
+
+src/functions.i: src/functions.cpp.i
+
+.PHONY : src/functions.i
+
+# target to preprocess a source file
+src/functions.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/functions.cpp.i
+.PHONY : src/functions.cpp.i
+
+src/functions.s: src/functions.cpp.s
+
+.PHONY : src/functions.s
+
+# target to generate assembly for a file
+src/functions.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Uno.dir/build.make CMakeFiles/Uno.dir/src/functions.cpp.s
+.PHONY : src/functions.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -367,30 +367,30 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Uno"
-	@echo "... classes/Card.o"
-	@echo "... classes/Card.i"
-	@echo "... classes/Card.s"
-	@echo "... classes/Client.o"
-	@echo "... classes/Client.i"
-	@echo "... classes/Client.s"
-	@echo "... classes/Deck.o"
-	@echo "... classes/Deck.i"
-	@echo "... classes/Deck.s"
-	@echo "... classes/Menu.o"
-	@echo "... classes/Menu.i"
-	@echo "... classes/Menu.s"
-	@echo "... classes/Player.o"
-	@echo "... classes/Player.i"
-	@echo "... classes/Player.s"
-	@echo "... classes/Server.o"
-	@echo "... classes/Server.i"
-	@echo "... classes/Server.s"
-	@echo "... classes/functions.o"
-	@echo "... classes/functions.i"
-	@echo "... classes/functions.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/Card.o"
+	@echo "... src/Card.i"
+	@echo "... src/Card.s"
+	@echo "... src/Client.o"
+	@echo "... src/Client.i"
+	@echo "... src/Client.s"
+	@echo "... src/Deck.o"
+	@echo "... src/Deck.i"
+	@echo "... src/Deck.s"
+	@echo "... src/Menu.o"
+	@echo "... src/Menu.i"
+	@echo "... src/Menu.s"
+	@echo "... src/Player.o"
+	@echo "... src/Player.i"
+	@echo "... src/Player.s"
+	@echo "... src/Server.o"
+	@echo "... src/Server.i"
+	@echo "... src/Server.s"
+	@echo "... src/functions.o"
+	@echo "... src/functions.i"
+	@echo "... src/functions.s"
 .PHONY : help
 
 

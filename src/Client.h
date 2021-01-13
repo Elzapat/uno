@@ -11,19 +11,26 @@
 #include "Deck.h"
 #include <iostream>
 #include <unistd.h>
-#include <math.h>
+#include <cmath>
 #include <map>
+#include <vector>
+#include <list>
 
 class Client {
 
-    struct Sprite {
-        sf::Texture texture;
-        sf::Sprite sprite;
-    };
-    struct Sound {
-        sf::SoundBuffer buffer;
-        sf::Sound sound;
-    };
+    public:
+        struct Sprite {
+            sf::Texture texture;
+            sf::Sprite sprite;
+        };
+        struct Sound {
+            sf::SoundBuffer buffer;
+            sf::Sound sound;
+        };
+        struct Animation {
+            sf::Vector2f start, finish, direction;
+            float speed, totalDistance, distanceMoved;
+        };
 
     public:
         Client(sf::RenderWindow &initWindow, Player initPlayer);
@@ -46,6 +53,7 @@ class Client {
         bool showUnoButton;
         bool chooseColor;
         bool movingCard;
+        int movingCardIndex;
         sf::Vector2f mousePos;
         Card* cardPicked;
         sf::Clock unoClock;
@@ -55,9 +63,9 @@ class Client {
                unoButtonH;
         void initPlayerList(sf::Text* playerList, sf::Font& font);
         void initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect);
+        void initAnimations();
         int processPacket(sf::Packet &packet);
-        void processEvent(sf::Event event, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue);
-        void processEvent(sf::Event event, int& hovered);
+        void processEvent(sf::Event event, int& hovered, sf::FloatRect red, sf::FloatRect yellow, sf::FloatRect green, sf::FloatRect blue);
         void drawEverything(int hovered = 0); 
         std::map<std::string, sf::RectangleShape> colorRects;
         void drawAnimation();

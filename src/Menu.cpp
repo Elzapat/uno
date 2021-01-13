@@ -19,7 +19,7 @@ Player Menu::initMenu() {
     
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(120);
     window.clear();
 
     background.texture.loadFromFile("assets/sprites/background.jpg");

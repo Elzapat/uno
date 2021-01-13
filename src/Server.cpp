@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server(sf::TcpListener *listenerInit) : listener(*listenerInit) {}
+Server::Server(sf::TcpListener *listenerInit) : listener(*listenerInit), nbDrawCard(0) {}
 void Server::addPlayer(sf::TcpSocket *socket) {
     Player player;
     player.setSocket(socket);
@@ -16,6 +16,7 @@ std::vector<Player> Server::getPlayers() { return players; }
 void Server::lobby() {
 
     int ID = 0;
+    std::cout << "server ok" << std::endl;
     if (!listenerBound) {
         if (listener.listen(PORT) != sf::Socket::Done) {
             std::cout << "erruer au listen du listener" << std::endl;
@@ -25,7 +26,6 @@ void Server::lobby() {
     }
 
     bool running = true;
-
 
     while (running) {
         if (selector.wait()) {
@@ -75,6 +75,7 @@ void Server::lobby() {
                                 for (std::vector<Player>::iterator it2 = players.begin(); it2 != players.end(); ++it2) {
                                     if (it != it2) it2->getSocket()->send(startGamePacket);
                                 }
+                                reverseTurn = false;
                                 game();
                                 std::cout << "server: game finished" << std::endl;
                                 for (auto p : players) std::cout << "server: player: " << p.getName() << std::endl;
@@ -102,7 +103,6 @@ void Server::game() {
     std::cout << "server: game started" << std::endl;
     Deck drawDeck(false);
     Deck playDeck(true); 
-    bool wildFourChosen = false;
     drawDeck.shuffle();
     dealSevenCards(drawDeck);
     drawFirstCard(drawDeck, playDeck);
@@ -121,7 +121,7 @@ void Server::game() {
                     sf::Socket::Status status = it->getSocket()->receive(packet);
                     if (status == sf::Socket::Done) {
                         int action;
-                        action = processPacket(packet, it, turnIt, playDeck, drawDeck, wildFourChosen);
+                        action = processPacket(packet, it, turnIt, playDeck, drawDeck);
                         if (action == 2) {
                             std::cout << "server: action 2 choosen" << std::endl;
                             running = false;
@@ -168,13 +168,12 @@ void Server::drawFirstCard(Deck &drawDeck, Deck &playDeck) {
     }
 }
 
-int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& player, std::vector<Player>::iterator& turnIt, Deck& playDeck, Deck& drawDeck, bool& wildFourChosen) {
+int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& player, std::vector<Player>::iterator& turnIt, Deck& playDeck, Deck& drawDeck) {
 
     int prefix;
     packet >> prefix;
     Card card;
     int color, value;
-    int nbDrawCard = 0;
     Card topCard = playDeck.getCards().back();
 
     switch (static_cast<PacketPrefix>(prefix)) {
@@ -189,7 +188,10 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
                     packet << static_cast<int>(prefix); 
                     player->getSocket()->send(packet);
                     choosingColor = true;
-                    if (card.getValue() == Card::Value::WILD_FOUR) wildFourChosen = true;
+                    if (card.getValue() == Card::Value::WILD_FOUR) {
+                        passExtraTurn = true;
+                        wildFourChosen = true;
+                    }
                 } else if (card.getValue() == Card::Value::SKIP) {
                     passExtraTurn = true;
                 } else if (card.getValue() == Card::Value::REVERSE) {
@@ -209,7 +211,6 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
                 topColor = card.getColor();
             
                 if (turnIt->getHand().size() == 1) {
-                    std::cout << "server: uno initated" << std::endl;
                     goingThroughUno = true;
                     sf::Packet unoPacket;
                     PacketPrefix unoPrefix = UNO;
@@ -226,10 +227,17 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
                     return 2;
                 }
 
-                if (passExtraTurn && !goingThroughUno) passTurn(turnIt);
-                for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
+                //std::cout << "server: 1pass extra turn in card played: " << passExtraTurn << std::endl;
+                if (passExtraTurn && !goingThroughUno && !choosingColor) {
+                    passTurn(turnIt);
+                    for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
+                    nbDrawCard = 0;
+                    passExtraTurn = false;
+                }
+
                 if (!goingThroughUno && !choosingColor) passTurn(turnIt);
                
+                //std::cout << "server: 2pass extra turn in card played: " << passExtraTurn << std::endl;
                 break;
             } 
             break;
@@ -243,8 +251,17 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
                 drawACard(turnIt, drawDeck, playDeck);
                 drawACard(turnIt, drawDeck, playDeck);
             }
-            if (passExtraTurn) passTurn(turnIt);
+            if (passExtraTurn && !choosingColor) {
+                passTurn(turnIt);
+                for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
+                passExtraTurn = false;
+            }
+            if (wildFourChosen && !choosingColor) {
+                for (int i = 0; i < 4; ++i) drawACard(turnIt, drawDeck, playDeck);
+                wildFourChosen = false;
+            }
             if (!choosingColor) passTurn(turnIt);
+            nbDrawCard = 0;
             goingThroughUno = false;
             break;
         case COLOR_CHOSEN:
@@ -256,16 +273,22 @@ int Server::processPacket(sf::Packet& packet, std::vector<Player>::iterator& pla
             packet << static_cast<int>(prefix) << colorChosen;
             for (auto p : players) p.getSocket()->send(packet);
 
-            if (wildFourChosen) {
+            if (!goingThroughUno) {
+                if (passExtraTurn) {
+                    passTurn(turnIt);
+                    for (int i = 0; i < nbDrawCard; ++i) drawACard(turnIt, drawDeck, playDeck);
+                    passExtraTurn = false;
+                }
+                if (wildFourChosen) {
+                    for (int i = 0; i < 4; ++i) drawACard(turnIt, drawDeck, playDeck);
+                    wildFourChosen = false;
+                }
                 passTurn(turnIt);
-                for (int i = 0; i < 4; ++i) drawACard(turnIt, drawDeck, playDeck);
-                wildFourChosen = false;
-            }
+            } else if (!goingThroughUno) passTurn(turnIt);
+            nbDrawCard = 0;
             choosingColor = false;
-            if (!goingThroughUno) passTurn(turnIt);
             break;
     }
-    passExtraTurn = false;
     return 0;
 }
 
@@ -314,8 +337,6 @@ bool Server::drawACard(std::vector<Player>::iterator& player, Deck& drawDeck, De
     for (auto p : players) p.getSocket()->send(packet);
 
     if (drawDeck.getCards().size() == 0) {
-        std::cout << "server: put back playDeck into drawDeck" << std::endl;
-        std::cout << "server: playDeck size: " << playDeck.getCards().size() << std::endl;
         int playDeckSize = playDeck.getCards().size();
         for (int i = 0; i < playDeckSize - 1; ++i) {
             std::cout << i << std::endl;
