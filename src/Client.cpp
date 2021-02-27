@@ -6,6 +6,7 @@ Client::Client(sf::RenderWindow &initWindow, Player initPlayer)
     showUnoButton = false;
 
     std::cout << "client start" << std::endl;
+    sf::Vector2f hello(23, 23);
 
     if (player.isHost) {
         sf::TcpSocket *socket = new sf::TcpSocket();
@@ -222,8 +223,7 @@ int Client::game() {
     alreadyDrew = false;
     movingCard = false;
     int hovered = 0;
-    playerList = new sf::Text[players.size()];
-    initPlayerList(playerList, font);
+    initPlayerList(font);
 
     sf::Text playerWonTest("", font, 50);
 
@@ -270,7 +270,6 @@ int Client::game() {
         drawEverything(hovered);
         window.display();
     }
-    delete[] playerList;
     return 0;
 }
 
@@ -328,6 +327,7 @@ int Client::processPacket(sf::Packet &packet) {
 
             topCard = card;
             topCard.sprite.setPosition(SCREEN_WIDTH / 2 + 20, SCREEN_HEIGHT / 2.4 - topCard.sprite.getGlobalBounds().height / 2);
+            topColor = topCard.getColor();
 
             if (ID == player.getUniqueID() && player.usesAnimations) rearrangeHandAnimation();
             else {
@@ -382,7 +382,7 @@ int Client::processPacket(sf::Packet &packet) {
             i = 0;
             for (auto p : players) {
                 if (p.getUniqueID() == ID) {
-                    players.erase(players.begin() + i);
+                    //players.erase(players.begin() + i);
                     break;
                 }
             }
@@ -421,7 +421,17 @@ int Client::processPacket(sf::Packet &packet) {
             winnerText.setPosition(SCREEN_WIDTH / 2 - winnerText.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.2);
             window.draw(winnerText);
             window.display();
-            sleep(5);
+            sf::Clock clock;
+            while (clock.getElapsedTime().asSeconds() < 5) {
+                sf::Event event;
+                while (window.pollEvent(event)) {
+                    if (event.type == sf::Event::Closed) window.close();
+                }
+            }
+
+            sf::Packet ping;
+            ping << 10000;
+            player.getSocket()->send(ping);
             return 2;
             break;
     }
@@ -467,7 +477,7 @@ void Client::processEvent(sf::Event event, int& hovered, sf::FloatRect red, sf::
                         }
                         i++;
                     }
-                } else if (player.isPlaying) {
+                } else if (player.isPlaying && !chooseColor) {
                     int i = 0;
                     for (auto& card : player.getHand()) {
                         if (card.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
@@ -515,7 +525,7 @@ void Client::processEvent(sf::Event event, int& hovered, sf::FloatRect red, sf::
                     cardPicked->sprite.getPosition().x <= topCard.sprite.getPosition().x + topCard.sprite.getGlobalBounds().width + 100 &&
                     cardPicked->sprite.getPosition().y >= topCard.sprite.getPosition().y - 100 &&
                     cardPicked->sprite.getPosition().y <= topCard.sprite.getPosition().y + topCard.sprite.getGlobalBounds().width + 100 &&
-                    player.isPlaying) {
+                    player.isPlaying && !chooseColor) {
                     
                     Card card = *cardPicked;
                     if (card.sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
@@ -553,14 +563,15 @@ void Client::processEvent(sf::Event event, int& hovered, sf::FloatRect red, sf::
     }
 }
 
-void Client::initPlayerList(sf::Text* playerList, sf::Font &font) {
+void Client::initPlayerList(sf::Font &font) {
 
     int i = 0;
     int spacing = SCREEN_WIDTH / (players.size() + 1);
     for (auto p : players) {
-        playerList[i] = sf::Text(p.getName(), font, 30);
-        playerList[i].setPosition(spacing * (i + 1) - playerList[i].getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.1);
-        playerList[i].setFillColor(sf::Color(0, 0, 0));
+        sf::Text player(p.getName(), font, 30);
+        player.setPosition(spacing * (i + 1) - player.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.1);
+        player.setFillColor(sf::Color(0, 0, 0));
+        playerList.push_back(player);
         i++;
     }
 }
@@ -635,30 +646,36 @@ void Client::drawAnimation() {
     float speed = 1500.f;
     hand[hand.size() - 1].sprite.setPosition(startingPos);
 
-    float dt = 1 / 120.0;
+    float dt = 1.0 / 120.0;
 
     bool continueAnimation = true;
-    float speed2 = -1500.f;
+    float speed2 = -1000.f;
     sf::Clock clock;
     while (continueAnimation) {
         continueAnimation = false;
         float frameTime = clock.restart().asSeconds();
+        if (frameTime == 0) frameTime += 0.0001;
         if (hand.size() > 1) {
             for (int i = 0; i < hand.size() - 1; ++i) {
-                if (hand[i].sprite.getPosition().x > newPos[i].x) {
-                    hand[i].sprite.move(speed2 * dt, 0);
-                    continueAnimation = true;
+                float frameTimeCopy = frameTime;
+                while (frameTimeCopy > 0.0) {
+                    float deltaTime = std::min(frameTimeCopy, dt);
+                    if (hand[i].sprite.getPosition().x > newPos[i].x) {
+                        hand[i].sprite.move(speed2 * deltaTime, 0);
+                        continueAnimation = true;
+                    }
+                    frameTimeCopy -= deltaTime;
                 }
             }
         }
         while (frameTime > 0.0) {
+            float deltaTime = std::min(frameTime, dt);
             if (hand[hand.size() - 1].sprite.getPosition().x < targetPos.x && hand[hand.size() - 1].sprite.getPosition().y < targetPos.y) {
-                float deltaTime = std::min(frameTime, dt);
                 sf::Vector2f v = speed * diffUnit;
                 hand[hand.size() - 1].sprite.move(v * deltaTime);
-                frameTime -= deltaTime;
                 continueAnimation = true;
-            } else frameTime = 0;
+            }
+            frameTime -= deltaTime;
         }
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -686,25 +703,30 @@ void Client::rearrangeHandAnimation() {
     for (int i = 0; i < hand.size(); ++i)
         newPos[i] = sf::Vector2f(spacing * (i + 1) - hand[i].sprite.getGlobalBounds().width / 2, SCREEN_HEIGHT * 0.75);
 
-    float speed = 1200.f;
+    float speed = 1000.f;
+    float dt = 1.f / 120.f;
     bool continueAnimation = true;
     sf::Clock clock;
 
     while (continueAnimation) {
         continueAnimation = false;
-        float deltaTime = clock.restart().asSeconds();
+        float frameTime = clock.restart().asSeconds();
+        if (frameTime == 0) frameTime += 0.0001;
         for (int i = 0; i < hand.size(); ++i) {
-            if (newPos[i].x <= oldPos[i].x) {
-                if (hand[i].sprite.getPosition().x > newPos[i].x) {
-                    hand[i].sprite.move(-speed * deltaTime, 0);
+            float frameTimeCopy = frameTime;
+            while (frameTimeCopy > 0.0) {
+                float deltaTime = std::min(frameTimeCopy, dt);
+                short direction = oldPos[i].x > newPos[i].x ? -1 : 1;
+                bool condition = direction == -1 ? 
+                                    hand[i].sprite.getPosition().x > newPos[i].x
+                                    : hand[i].sprite.getPosition().x < newPos[i].x;
+                if (condition) {
+                    hand[i].sprite.move(direction * speed * deltaTime, 0);
                     continueAnimation = true;
                 }
-            } else {
-                if (hand[i].sprite.getPosition().x < newPos[i].x) {
-                    hand[i].sprite.move(speed * deltaTime, 0);
-                    continueAnimation = true;
-                }
+                frameTimeCopy -= deltaTime;
             }
+
             sf::Event event;
             while (window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) window.close();

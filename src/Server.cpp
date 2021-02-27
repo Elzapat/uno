@@ -28,7 +28,7 @@ void Server::lobby() {
     bool running = true;
 
     while (running) {
-        if (selector.wait()) {
+        if (selector.wait(sf::seconds(1))) {
             if (selector.isReady(listener)) {
                 sf::TcpSocket *client = new sf::TcpSocket;
                 if (listener.accept(*client) == sf::Socket::Done) {
@@ -106,8 +106,10 @@ void Server::game() {
     drawDeck.shuffle();
     dealSevenCards(drawDeck);
     drawFirstCard(drawDeck, playDeck);
-    std::vector<Player>::iterator turnIt = players.begin();
+    int first_player = rand() % players.size();
+    std::vector<Player>::iterator turnIt = players.begin() + first_player;
     sendTurnInfo(turnIt);
+    nbDrawCard = 0;
 
     bool running = true;
     while (running) {
@@ -126,7 +128,12 @@ void Server::game() {
                             std::cout << "server: action 2 choosen" << std::endl;
                             running = false;
                         } else continue;
-                    } else if (status = sf::Socket::Disconnected) playerDisconnected(*it);
+                    } else if (status = sf::Socket::Disconnected) {
+                        playerDisconnected(*it);
+                        if (turnIt == it) passTurn(turnIt);
+                        players.erase(it);
+                        it--;
+                    }
                 }
             }
         }

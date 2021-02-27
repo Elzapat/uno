@@ -2,7 +2,10 @@ CMake
 cmake_install.cmake
 CMakeLists.txt
 CMakeCache.txt
+CMakeFiles
 old_repo
 makefile2
 SFML
 CMakeLists.txt
+CMakeListsWindows.txt
+.gitignore

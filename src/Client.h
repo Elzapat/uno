@@ -42,7 +42,7 @@ class Client {
         int SCREEN_WIDTH;
         int SCREEN_HEIGHT;
         std::vector<Player> players;
-        sf::Text *playerList;
+        std::vector<sf::Text> playerList;
         Player player;
         std::map<std::string, Sound> sounds;
         Sprite background;
@@ -61,7 +61,7 @@ class Client {
                drawButtonH,
                unoButton,
                unoButtonH;
-        void initPlayerList(sf::Text* playerList, sf::Font& font);
+        void initPlayerList(sf::Font& font);
         void initButton(Sprite &button, sf::Texture texture, int x, int y, sf::IntRect textureRect);
         void initAnimations();
         int processPacket(sf::Packet &packet);
