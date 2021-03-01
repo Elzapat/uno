@@ -8,4 +8,5 @@ makefile2
 SFML
 CMakeLists.txt
 CMakeListsWindows.txt
+Makefile
 .gitignore
